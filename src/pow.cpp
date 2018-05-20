@@ -128,6 +128,7 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     int sum_time = 0, nWeight = 0;
     
     int sum_last10_time=0;  //Solving time of the last ten block
+    int sum_last05_time=0;  //Solving time of the last five block
 
     // Loop through N most recent blocks.
     for (int i = height - N; i < height; i++) {
@@ -152,6 +153,10 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
             sum_last10_time += solvetime;
             sum_last10_target += target;
         }       
+        if(i >= height-5) 
+        {
+            sum_last05_time += solvetime;
+        }       
 
     }
     
@@ -165,26 +170,46 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     const arith_uint256 pow_limit = UintToArith256(params.PowLimit(true));
     
     
-    arith_uint256 next_target;
-    next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T;  // next_target = LWMA * avgTarget * adjust /T;   
+    arith_uint256 next_target, last10_target, last05_target, last_target;
+    next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T;  // next_target = LWMA * avgTarget * adjust /T; 
+    last10_target = next_target;
+    last05_target = next_target;
+    last_target.SetCompact(pindexPrev->nBits);   
+
     
-    /*if the last 10 blocks are generated in 5 minutes, we tripple the difficulty of average of the last 10 blocks*/
+    /*if the last 10 blocks are generated in 5 minutes, we double the difficulty of last blocks*/
     if(height>nNewRuleHeight && sum_last10_time <= 5*60)   
     {  
-        arith_uint256 avg_last10_target;
-        avg_last10_target = sum_last10_target/10;
-        if(next_target > avg_last10_target/2)  next_target = avg_last10_target/2;   
+        if(next_target > last_target/2)  last10_target = last_target/2;   
     }
     else if(height>nNewRuleHeight && sum_last10_time <= 10*60)
     {            
-        arith_uint256 avg_last10_target;
-        avg_last10_target = sum_last10_target/10;
-        if(next_target > avg_last10_target*2/3)  next_target = avg_last10_target*2/3;   
+        if(next_target > last_target*2/3)  last10_target = last_target*2/3;   
     }
+    else if(height>nNewRuleHeight && sum_last10_time <= 15*60)
+    {            
+        if(next_target > last_target*3/4)  last10_target = last_target*3/4;   
+    };
+    /*if the last 5 blocks are generated in 2.5 minutes, we double the difficulty of last blocks*/
+    if(height>nNewRuleHeight && sum_last05_time <= 2.5*60)   
+    {  
+        if(next_target > last_target/2)  last05_target = last_target/2;   
+    }
+    else if(height>nNewRuleHeight && sum_last05_time <= 5*60)
+    {            
+        if(next_target > last_target*2/3)  last05_target = last_target*2/3;   
+    }
+    else if(height>nNewRuleHeight && sum_last05_time <= 7*60)
+    {            
+        if(next_target > last_target*3/4)  last05_target = last_target*3/4;   
+    }; 
+    /* set next_target by 10,05 last block time */
+    if(next_target > last10_target ) next_target = last10_target ;
+    if(next_target > last05_target ) next_target = last05_target ;
+
     
     if(height>nNewRuleHeight)
     {
-        arith_uint256 last_target;
         last_target.SetCompact(pindexPrev->nBits);       
         if(next_target> last_target*13/10) next_target = last_target*13/10;    
         /*in case difficulty drops too soon compared to the last block, especially
