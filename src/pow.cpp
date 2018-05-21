@@ -123,7 +123,8 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     double adjust = 1;//0.998;
     
     assert(height > N);
-    if(height>nNewRuleHeight) N = 45;
+    //N = 60 again because of 5,10 window
+    //if(height>nNewRuleHeight) N = 45;
     arith_uint256 sum_target, sum_last10_target;
     int sum_time = 0, nWeight = 0;
     
@@ -178,15 +179,16 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
 
     
     /*if the last 10 blocks are generated in 5 minutes, we double the difficulty of last blocks*/
-    if(height>nNewRuleHeight && sum_last10_time <= 5*60)   
+    // change 5->9  10->13  15->17 minute 
+    if(height>nNewRuleHeight && sum_last10_time <= 9*60)   
     {  
         if(next_target > last_target/2)  last10_target = last_target/2;   
     }
-    else if(height>nNewRuleHeight && sum_last10_time <= 10*60)
+    else if(height>nNewRuleHeight && sum_last10_time <= 13*60)
     {            
         if(next_target > last_target*2/3)  last10_target = last_target*2/3;   
     }
-    else if(height>nNewRuleHeight && sum_last10_time <= 15*60)
+    else if(height>nNewRuleHeight && sum_last10_time <= 17*60)
     {            
         if(next_target > last_target*3/4)  last10_target = last_target*3/4;   
     };
@@ -195,11 +197,11 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     {  
         if(next_target > last_target/2)  last05_target = last_target/2;   
     }
-    else if(height>nNewRuleHeight && sum_last05_time <= 5*60)
+    else if(height>nNewRuleHeight && sum_last05_time <= 5.0*60)
     {            
         if(next_target > last_target*2/3)  last05_target = last_target*2/3;   
     }
-    else if(height>nNewRuleHeight && sum_last05_time <= 7*60)
+    else if(height>nNewRuleHeight && sum_last05_time <= 7.5*60)
     {            
         if(next_target > last_target*3/4)  last05_target = last_target*3/4;   
     }; 
