@@ -178,7 +178,7 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     last_target.SetCompact(pindexPrev->nBits);   
 
     
-    /*if the last 10 blocks are generated in 5 minutes, we double the difficulty of last blocks*/
+    /*if the last 10 blocks are generated in 9 minutes, we double the difficulty of last blocks*/
     // change 5->9  10->13  15->17 minute 
     if(height>nNewRuleHeight && sum_last10_time <= 9*60)   
     {  
@@ -206,6 +206,8 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
         if(next_target > last_target*3/4)  last05_target = last_target*3/4;   
     }; 
     /* set next_target by 10,05 last block time */
+    // last10_target, last05_target reduce continuous short_time_blocks( ex 0.0~1.0 minute block time) 
+    // But average block time is 2 minute. LWMA window method make average block time 2 minute. 
     if(next_target > last10_target ) next_target = last10_target ;
     if(next_target > last05_target ) next_target = last05_target ;
 
