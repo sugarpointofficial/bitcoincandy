@@ -178,32 +178,42 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     last_target.SetCompact(pindexPrev->nBits);   
 
     
-    /*if the last 10 blocks are generated in 9 minutes, we double the difficulty of last blocks*/
-    // change 5->9  10->13  15->17 minute 
-    if(height>nNewRuleHeight && sum_last10_time <= 9*60)   
+    /*if the last 10 blocks are generated in short minutes, we increase the difficulty of last blocks*/
+    // change 5->10  10->15  15->20 minute  add 30 minute condition
+    // ref : https://steemit.com/cdy/@bluejaytodd/bitcoin-candy-cdy-block-time
+    if(height>nNewRuleHeight && sum_last10_time <= 10*60)   
     {  
         if(next_target > last_target/2)  last10_target = last_target/2;   
     }
-    else if(height>nNewRuleHeight && sum_last10_time <= 13*60)
+    else if(height>nNewRuleHeight && sum_last10_time <= 15*60)
     {            
         if(next_target > last_target*2/3)  last10_target = last_target*2/3;   
     }
-    else if(height>nNewRuleHeight && sum_last10_time <= 17*60)
+    else if(height>nNewRuleHeight && sum_last10_time <= 20*60)
     {            
         if(next_target > last_target*3/4)  last10_target = last_target*3/4;   
+    }
+    else if(height>nNewRuleHeight && sum_last10_time <= 30*60)
+    {            
+        if(next_target > last_target*4/5)  last10_target = last_target*4/5;   
     };
     /*if the last 5 blocks are generated in 2.5 minutes, we double the difficulty of last blocks*/
-    if(height>nNewRuleHeight && sum_last05_time <= 2.5*60)   
+    // condition 5.0  7.5 10 15 minute of 5 block time
+    if(height>nNewRuleHeight && sum_last05_time <= 5*60)   
     {  
         if(next_target > last_target/2)  last05_target = last_target/2;   
     }
-    else if(height>nNewRuleHeight && sum_last05_time <= 5.0*60)
+    else if(height>nNewRuleHeight && sum_last05_time <= 7.5*60)
     {            
         if(next_target > last_target*2/3)  last05_target = last_target*2/3;   
     }
-    else if(height>nNewRuleHeight && sum_last05_time <= 7.5*60)
+    else if(height>nNewRuleHeight && sum_last05_time <= 10*60)
     {            
         if(next_target > last_target*3/4)  last05_target = last_target*3/4;   
+    } 
+    else if(height>nNewRuleHeight && sum_last05_time <= 15*60)
+    {            
+        if(next_target > last_target*4/5)  last05_target = last_target*4/5;   
     }; 
     /* set next_target by 10,05 last block time */
     // last10_target, last05_target reduce continuous short_time_blocks( ex 0.0~1.0 minute block time) 
