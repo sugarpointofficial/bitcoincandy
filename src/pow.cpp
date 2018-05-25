@@ -179,45 +179,46 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
 
     
     /*if the last 10 blocks are generated in short minutes, we increase the difficulty of last blocks*/
-    // change 5->10  10->15  15->20 minute  add 30 minute condition
+    // last 10 block time : 10 15 20 add 30 minute 
     // ref : https://steemit.com/cdy/@bluejaytodd/bitcoin-candy-cdy-block-time
     if(height>nNewRuleHeight && sum_last10_time <= 10*60)   
     {  
-        if(next_target > last_target/2)  last10_target = last_target/2;   
+        if(next_target > last_target*3/4)  last10_target = last_target*3/4;   
     }
     else if(height>nNewRuleHeight && sum_last10_time <= 15*60)
     {            
-        if(next_target > last_target*2/3)  last10_target = last_target*2/3;   
+        if(next_target > last_target*4/5)  last10_target = last_target*4/5;   
     }
     else if(height>nNewRuleHeight && sum_last10_time <= 20*60)
     {            
-        if(next_target > last_target*3/4)  last10_target = last_target*3/4;   
+        if(next_target > last_target*5/6)  last10_target = last_target*5/6;   
     }
     else if(height>nNewRuleHeight && sum_last10_time <= 30*60)
     {            
-        if(next_target > last_target*4/5)  last10_target = last_target*4/5;   
+        if(next_target > last_target*6/7)  last10_target = last_target*6/7;   
     };
-    /*if the last 5 blocks are generated in 2.5 minutes, we double the difficulty of last blocks*/
-    // condition 5.0  7.5 10 15 minute of 5 block time
+    /*if the last 5 blocks are generated in short time, we increase the difficulty of last blocks*/
+    // last 5 block time : 5.0  7.5 10 15 minute 
     if(height>nNewRuleHeight && sum_last05_time <= 5*60)   
     {  
-        if(next_target > last_target/2)  last05_target = last_target/2;   
+        if(next_target > last_target*3/4)  last05_target = last_target*3/4;   
     }
     else if(height>nNewRuleHeight && sum_last05_time <= 7.5*60)
     {            
-        if(next_target > last_target*2/3)  last05_target = last_target*2/3;   
+        if(next_target > last_target*4/5)  last05_target = last_target*4/5;   
     }
     else if(height>nNewRuleHeight && sum_last05_time <= 10*60)
     {            
-        if(next_target > last_target*3/4)  last05_target = last_target*3/4;   
+        if(next_target > last_target*5/6)  last05_target = last_target*5/6;   
     } 
     else if(height>nNewRuleHeight && sum_last05_time <= 15*60)
     {            
-        if(next_target > last_target*4/5)  last05_target = last_target*4/5;   
+        if(next_target > last_target*6/7)  last05_target = last_target*6/7;   
     }; 
-    /* set next_target by 10,05 last block time */
+    /* set next_target by 10,5 last block time */
     // last10_target, last05_target reduce continuous short_time_blocks( ex 0.0~1.0 minute block time) 
-    // But average block time is 2 minute. LWMA window method make average block time 2 minute. 
+    // But average block time exceed 2 minute. LWMA window method make average block time 2 minute without upper condition. 
+    // Averge block time would increase by about 0.65*7/6 + 0.3 =1.058(5.8%). 
     if(next_target > last10_target ) next_target = last10_target ;
     if(next_target > last05_target ) next_target = last05_target ;
 
