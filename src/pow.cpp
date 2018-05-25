@@ -130,6 +130,8 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     
     int sum_last10_time=0;  //Solving time of the last ten block
     int sum_last05_time=0;  //Solving time of the last five block
+    int sum_last03_time=0;  //Solving time of the last three block
+    int sum_last02_time=0;  //Solving time of the last two block
 
     // Loop through N most recent blocks.
     for (int i = height - N; i < height; i++) {
@@ -158,6 +160,14 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
         {
             sum_last05_time += solvetime;
         }       
+        if(i >= height-3) 
+        {
+            sum_last03_time += solvetime;
+        }       
+        if(i >= height-2) 
+        {
+            sum_last02_time += solvetime;
+        }       
 
     }
     
@@ -171,10 +181,12 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     const arith_uint256 pow_limit = UintToArith256(params.PowLimit(true));
     
     
-    arith_uint256 next_target, last10_target, last05_target, last_target;
+    arith_uint256 next_target, last10_target, last05_target, last03_target, last02_target, last_target;
     next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T;  // next_target = LWMA * avgTarget * adjust /T; 
     last10_target = next_target;
     last05_target = next_target;
+    last03_target = next_target;
+    last02_target = next_target;
     last_target.SetCompact(pindexPrev->nBits);   
 
     
@@ -214,13 +226,42 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     else if(height>nNewRuleHeight && sum_last05_time <= 15*60)
     {            
         if(next_target > last_target*6/7)  last05_target = last_target*6/7;   
-    }; 
+    };
+    // last 3 block time :  1.5 3 6 minute 
+    if(height>nNewRuleHeight && sum_last03_time <= 1.5*60)   
+    {  
+        if(next_target > last_target*2/3)  last03_target = last_target*2/3;   
+    }
+    else if(height>nNewRuleHeight && sum_last03_time <= 3*60)
+    {            
+        if(next_target > last_target*3/4)  last03_target = last_target*3/4;   
+    }
+    else if(height>nNewRuleHeight && sum_last03time <= 6*60)
+    {            
+        if(next_target > last_target*5/6)  last03target = last_target*5/6;   
+    } 
+    // last 2 block time :  1 2 4  minute 
+    if(height>nNewRuleHeight && sum_last03_time <= 1*60)   
+    {  
+        if(next_target > last_target*2/3)  last02_target = last_target*2/3;   
+    }
+    else if(height>nNewRuleHeight && sum_last02_time <= 2*60)
+    {            
+        if(next_target > last_target*3/4)  last02_target = last_target*3/4;   
+    }
+    else if(height>nNewRuleHeight && sum_last02_time <= 4*60)
+    {            
+        if(next_target > last_target*5/6)  last02_target = last_target*5/6;   
+    } 
+
     /* set next_target by 10,5 last block time */
     // last10_target, last05_target reduce continuous short_time_blocks( ex 0.0~1.0 minute block time) 
     // But average block time exceed 2 minute. LWMA window method make average block time 2 minute without upper condition. 
     // Averge block time would increase by about 0.65*7/6 + 0.3 =1.058(5.8%). 
     if(next_target > last10_target ) next_target = last10_target ;
     if(next_target > last05_target ) next_target = last05_target ;
+    if(next_target > last03_target ) next_target = last03_target ;
+    if(next_target > last02_target ) next_target = last02_target ;
 
     
     if(height>nNewRuleHeight)
