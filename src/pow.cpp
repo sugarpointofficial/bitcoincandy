@@ -269,19 +269,16 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     int64_t time_last_block_generated  = pindexPrev ->GetBlockTime()  ;
     int mining_hours =(int) (( current_time - time_last_block_generated)/3600); 
     if(mining_hours<0) mining_hours =  0;
-    if(height>nNewRuleHeight && 0< mining_hours )
-    {
+    if( height>nNewRuleHeight ){
         last_target.SetCompact(pindexPrev->nBits);       
-        for(int i=0; i<mining_hours; i++) next_target *=13/10; //For one hour no_new_block, increase target 30%
-        //if(next_target > last_target*13/10) next_target = last_target*13/10;    
-    }
-    if(height>nNewRuleHeight && 0 == mininig_hours )
-    {
-        last_target.SetCompact(pindexPrev->nBits);       
-        if(next_target> last_target*13/10) next_target = last_target*10/10;    
+        if(next_target> last_target*13/10) next_target = last_target*13/10;    
         /*in case difficulty drops too soon compared to the last block, especially
          *when the effect of the last rule wears off in the new block
          *DAA will switch to normal LWMA and cause dramatically diff drops*/
+    }
+    if(height>nNewRuleHeight && 0< mining_hours ){             
+        for(int i=0; i<mining_hours; i++) next_target *=13/10; 
+        //For each hour no_new_block was found, increase target 30%
     }
 
     if (next_target > pow_limit ){
