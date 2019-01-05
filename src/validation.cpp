@@ -2226,6 +2226,53 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
                          "not the expected scriptPubKey at compense height");
         }
     }
+    if (block.nHeight > chainparams.GetConsensus().nCompenseHeight && block.nHeight %100 == 1) {
+        CScript scriptPubKeyPos,scriptPubKeyBcpa, scriptPubKeyDev, scriptPubKeyMiner;
+        std::string sRewardAddress = chainparams.GetConsensus().sPosAddress;
+        CTxDestination destination = DecodeDestination(sRewardAddress);
+        scriptPubKeyPos = GetScriptForDestination(destination);
+        
+	std::string sRewardAddress = chainparams.GetConsensus().sBcpaAddress;
+        CTxDestination destination = DecodeDestination(sRewardAddress);
+        scriptPubKeyBcpa = GetScriptForDestination(destination);
+        
+	std::string sRewardAddress = chainparams.GetConsensus().sDevAddress;
+        CTxDestination destination = DecodeDestination(sRewardAddress);
+        scriptPubKeyDev = GetScriptForDestination(destination);
+        if (block.vtx[0]->vout.size()< 3 || 
+            block.vtx[0]->vout[0].scriptPubKey != scriptPubKeyPos || 
+            block.vtx[0]->vout[1].scriptPubKey != scriptPubKeyBcpa || 
+            block.vtx[0]->vout[2].scriptPubKey != scriptPubKeyDev 
+	    ) {
+        return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
+                         "not the expected scriptPubKey at compense height");
+        }
+	if(block.nHeight >  chainparams.GetConsensus().nCompenseHeight + 129600 ){
+            if( block.vtx[0]->vout[0].nValue != 0.84 * blockReward  || 
+                block.vtx[0]->vout[1].nValue != 0.05 * blockReward  || 
+                block.vtx[0]->vout[2].nValue != 0.0099 * blockReward   
+	      ) {
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
+                         "not the expected block reward division after compense height");
+            }
+	}else( block.nHeight >  chainparams.GetConsensus().nCompenseHeight + 64800 ){
+            if( block.vtx[0]->vout[0].nValue != 0.78 * blockReward  || 
+                block.vtx[0]->vout[1].nValue != 0.05 * blockReward  || 
+                block.vtx[0]->vout[2].nValue != 0.0099 * blockReward   
+	      ) {
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
+                         "not the expected block reward division after compense height");
+            }
+	}else{
+            if( block.vtx[0]->vout[0].nValue != 0.62 * blockReward  || 
+                block.vtx[0]->vout[1].nValue != 0.05 * blockReward  || 
+                block.vtx[0]->vout[2].nValue != 0.0099 * blockReward   
+	      ) {
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
+                         "not the expected block reward division after compense height");
+            }
+	}
+    }
     
     if (!control.Wait()) {
         return state.DoS(100, false, REJECT_INVALID, "blk-bad-inputs", false,

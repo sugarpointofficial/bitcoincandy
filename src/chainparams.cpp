@@ -180,6 +180,9 @@ public:
         /** Height to publish compensing coins*/
         consensus.nCompenseHeight = 706000;
         consensus.sCompenseAddress = "CVbtt8dqZKG4xzG7C1oGzEd1G66eoDn2ee";
+        consensus.sPosAddress = "CZsgLwvfEnBALkn3DyM4TDrH2gTBVcfyPR";
+        consensus.sBcpaAddress = "CdKYRRgBqHmopBQxxeW7fWjQtbR19MVnmR";
+        consensus.sDevAddress = "CW8yjx9YVjDiGPv4nKugmZNFVwkFzKgf7G";
         
         consensus.BitcoinPostforkBlock = uint256S("0000000000000000007b746068bd08ba4089f97636690e9dc758774e7db21f17");	// 512666 block hash
         consensus.BitcoinPostforkTime = 1515799972;
@@ -384,6 +387,9 @@ public:
 
         consensus.nCompenseHeight = 202136;
         consensus.sCompenseAddress = "mhZBATdK8nghjJ6S8F7DSEvDc1pz47bgzP";
+        consensus.sPosAddress = "CZsgLwvfEnBALkn3DyM4TDrH2gTBVcfyPR";
+        consensus.sBcpaAddress = "CdKYRRgBqHmopBQxxeW7fWjQtbR19MVnmR";
+        consensus.sDevAddress = "CW8yjx9YVjDiGPv4nKugmZNFVwkFzKgf7G";
         
         consensus.BitcoinPostforkBlock = uint256S("00000000d16d6c2aecc7436eea0c54a53741fee9abf265606aa465d6fd3f3d8a"); // block 201601
         consensus.BitcoinPostforkTime = 1393815074;
@@ -537,6 +543,9 @@ public:
 
         consensus.nCompenseHeight = 202000; 
         consensus.sCompenseAddress = "CSZnk6KoMoEwHmveF3KcyRfEWsZfZ3dgEU";
+        consensus.sPosAddress = "CZsgLwvfEnBALkn3DyM4TDrH2gTBVcfyPR";
+        consensus.sBcpaAddress = "CdKYRRgBqHmopBQxxeW7fWjQtbR19MVnmR";
+        consensus.sDevAddress = "CW8yjx9YVjDiGPv4nKugmZNFVwkFzKgf7G";
         // Nov, 13 hard fork is always on on regtest.
         consensus.daaHeight = 2250;
          
