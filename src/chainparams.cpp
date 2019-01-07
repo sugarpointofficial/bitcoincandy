@@ -178,7 +178,7 @@ public:
         consensus.CDYEquihashForkHeight = 656960; // Around 09/01/2018
  
         /** Height to publish compensing coins*/
-        consensus.nCompenseHeight = 706000;
+        consensus.nCompenseHeight = 730000;
         consensus.sCompenseAddress = "CVbtt8dqZKG4xzG7C1oGzEd1G66eoDn2ee";
         consensus.sPosAddress = "CZsgLwvfEnBALkn3DyM4TDrH2gTBVcfyPR";
         consensus.sBcpaAddress = "CdKYRRgBqHmopBQxxeW7fWjQtbR19MVnmR";

@@ -228,7 +228,7 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
     coinbaseTx.vin[0].prevout.SetNull();
     Amount blockReward =
          nFees +   GetBlockSubsidy(nHeight, chainparams.GetConsensus());
-    if (nHeight > chainparams.GetConsensus().nCompenseHeight &&  nHeight %100 == 1) {
+    if (nHeight > chainparams.GetConsensus().nCompenseHeight ) {
         coinbaseTx.vout.resize(4);
         coinbaseTx.vout[0].scriptPubKey =  scriptPubKeyPos;
         coinbaseTx.vout[1].scriptPubKey =  scriptPubKeyBcpa;
@@ -236,7 +236,7 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
         coinbaseTx.vout[3].scriptPubKey =  scriptPubKeyIn;
 
         coinbaseTx.vout[1].nValue = 0.05 * blockReward;
-        coinbaseTx.vout[2].nValue = 0.0099 * blockReward;
+        coinbaseTx.vout[2].nValue = 0.00999 * blockReward;
 	                         // 0.01 dev reward to remove possible precision error
 	if(nHeight > chainparams.GetConsensus().nCompenseHeight + 129600 ){// after 6 month
             coinbaseTx.vout[0].nValue = 0.84 * blockReward;
@@ -251,9 +251,17 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
         coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
         pblock->vtx[0] = MakeTransactionRef(coinbaseTx);
         pblocktemplate->vTxFees[0] = -1 * nFees;
-    }else{
+    }else if( nHeight == chainparams.GetConsensus().nCompenseHeight ){
         coinbaseTx.vout.resize(1);
         coinbaseTx.vout[0].scriptPubKey = fCompense? scriptPubKeyCompense:scriptPubKeyIn;
+        coinbaseTx.vout[0].nValue =
+            nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
+        coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
+        pblock->vtx[0] = MakeTransactionRef(coinbaseTx);
+        pblocktemplate->vTxFees[0] = -1 * nFees;
+    }else{
+        coinbaseTx.vout.resize(1);
+        coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
         coinbaseTx.vout[0].nValue =
             nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
         coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;

@@ -2226,7 +2226,7 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
                          "not the expected scriptPubKey at compense height");
         }
     }
-    if (block.nHeight > chainparams.GetConsensus().nCompenseHeight && block.nHeight %100 == 1) {
+    if (block.nHeight > chainparams.GetConsensus().nCompenseHeight ) {
         CScript scriptPubKeyPos,scriptPubKeyBcpa, scriptPubKeyDev, scriptPubKeyMiner;
         std::string sRewardAddress = chainparams.GetConsensus().sPosAddress;
         CTxDestination destination = DecodeDestination(sRewardAddress);
@@ -2245,12 +2245,12 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
             block.vtx[0]->vout[2].scriptPubKey != scriptPubKeyDev 
 	    ) {
         return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
-                         "not the expected scriptPubKey at compense height");
+                         "not the expected scriptPubKey after compense height");
         }
 	if(block.nHeight >  chainparams.GetConsensus().nCompenseHeight + 129600 ){
             if( block.vtx[0]->vout[0].nValue != 0.84 * blockReward  || 
                 block.vtx[0]->vout[1].nValue != 0.05 * blockReward  || 
-                block.vtx[0]->vout[2].nValue != 0.0099 * blockReward   
+                block.vtx[0]->vout[2].nValue != 0.00999 * blockReward   
 	      ) {
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
                          "not the expected block reward division after compense height");
@@ -2258,7 +2258,7 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
 	}else( block.nHeight >  chainparams.GetConsensus().nCompenseHeight + 64800 ){
             if( block.vtx[0]->vout[0].nValue != 0.78 * blockReward  || 
                 block.vtx[0]->vout[1].nValue != 0.05 * blockReward  || 
-                block.vtx[0]->vout[2].nValue != 0.0099 * blockReward   
+                block.vtx[0]->vout[2].nValue != 0.00999 * blockReward   
 	      ) {
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
                          "not the expected block reward division after compense height");
@@ -2266,7 +2266,7 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
 	}else{
             if( block.vtx[0]->vout[0].nValue != 0.62 * blockReward  || 
                 block.vtx[0]->vout[1].nValue != 0.05 * blockReward  || 
-                block.vtx[0]->vout[2].nValue != 0.0099 * blockReward   
+                block.vtx[0]->vout[2].nValue != 0.00999 * blockReward   
 	      ) {
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
                          "not the expected block reward division after compense height");
