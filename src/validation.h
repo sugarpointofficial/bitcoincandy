@@ -392,10 +392,10 @@ bool ActivateBestChain(
     const Config &config, CValidationState &state,
     std::shared_ptr<const CBlock> pblock = std::shared_ptr<const CBlock>());
 Amount GetBlockSubsidy(int nHeight, const Consensus::Params &consensusParams);
-int64_t GetBlockRewardBcpa(int nHeight, int64_t blockValue);
-int64_t GetBlockRewardDev(int nHeight, int64_t blockValue);
-int64_t GetBlockRewardPos(int nHeight, int64_t blockValue);
-int64_t GetBlockRewardMiner(int nHeight, int64_t blockValue);
+Amount GetBlockRewardBcpa(int nHeight, Amount blockValue, const Consensus::Params &consensusParams);
+Amount GetBlockRewardDev(int nHeight, Amount blockValue, const Consensus::Params &consensusParams);
+Amount GetBlockRewardPos(int nHeight, Amount blockValue, const Consensus::Params &consensusParams);
+Amount GetBlockRewardMiner(int nHeight, Amount blockValue, const Consensus::Params &consensusParams);
 
 
 /** 
