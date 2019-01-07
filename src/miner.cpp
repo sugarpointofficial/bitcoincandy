@@ -235,19 +235,20 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
         coinbaseTx.vout[2].scriptPubKey =  scriptPubKeyDev;
         coinbaseTx.vout[3].scriptPubKey =  scriptPubKeyIn;
 
-        coinbaseTx.vout[1].nValue = 0.05 * blockReward;
-        coinbaseTx.vout[2].nValue = 0.00999 * blockReward;
-	                         // 0.01 dev reward to remove possible precision error
-	if(nHeight > chainparams.GetConsensus().nCompenseHeight + 129600 ){// after 6 month
-            coinbaseTx.vout[0].nValue = 0.84 * blockReward;
-            coinbaseTx.vout[3].nValue = 0.10 * blockReward;
-	}else if(nHeight > chainparams.GetConsensus().nCompenseHeight + 64800 ){//after 3 month
-            coinbaseTx.vout[0].nValue = 0.78 * blockReward;
-            coinbaseTx.vout[3].nValue = 0.16 * blockReward;
-	}else{                                          //after reward division and compensation
-            coinbaseTx.vout[0].nValue = 0.62 * blockReward;
-            coinbaseTx.vout[3].nValue = 0.32 * blockReward;
-	}
+        coinbaseTx.vout[0].nValue = GetBlockRewardPos(nHeight, blockReward);   //0.84, 0.76, 0.62 * blockReward;
+        coinbaseTx.vout[1].nValue = GetBlockRewardBcpa(nHeight, blockReward);  //0.05 * blockReward;
+        coinbaseTx.vout[2].nValue = GetBlockRewardDev(nHeight, blockReward);   //0.01 * blockReward;
+        coinbaseTx.vout[3].nValue = GetBlockRewardMiner(nHeight, blockReward); //0.32, 0.16, 0.10 * blockReward;
+	//if(nHeight > chainparams.GetConsensus().nCompenseHeight + 129600 ){// after 6 month
+        //    coinbaseTx.vout[0].nValue = 0.84 * blockReward;
+        //    coinbaseTx.vout[3].nValue = 0.10 * blockReward;
+	//}else if(nHeight > chainparams.GetConsensus().nCompenseHeight + 64800 ){//after 3 month
+        //    coinbaseTx.vout[0].nValue = 0.78 * blockReward;
+        //    coinbaseTx.vout[3].nValue = 0.16 * blockReward;
+	//}else{                                          //after reward division and compensation
+        //    coinbaseTx.vout[0].nValue = 0.62 * blockReward;
+        //    coinbaseTx.vout[3].nValue = 0.32 * blockReward;
+	//}
         coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
         pblock->vtx[0] = MakeTransactionRef(coinbaseTx);
         pblocktemplate->vTxFees[0] = -1 * nFees;

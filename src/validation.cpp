@@ -1252,6 +1252,43 @@ Amount GetBlockSubsidy(int nHeight, const Consensus::Params &consensusParams) {
     return Amount(nSubsidy.GetSatoshis() >> halvings);
 }
 
+int64_t GetBlockRewardBcpa(int nHeight, int64_t blockValue){
+    int64_t ret = 0;
+    if (nHeight > chainparams.GetConsensus().nCompenseHeight )
+        ret = blockValue*0.05;
+    return ret;
+}
+
+int64_t GetBlockRewardDev(int nHeight, int64_t blockValue){
+    int64_t ret = 0;
+    if (nHeight > chainparams.GetConsensus().nCompenseHeight )
+        ret = blockValue*0.01;
+    return ret;
+}
+
+int64_t GetBlockRewardPos(int nHeight, int64_t blockValue){
+    int64_t ret=0;
+        if(nHeight > chainparams.GetConsensus().nCompenseHeight + 129600 ){// after 6 month
+            ret = 0.84 * blockValue;
+        }else if(nHeight > chainparams.GetConsensus().nCompenseHeight + 64800 ){//after 3 month
+            ret = 0.78 * blockValue;
+        }else if(nHeight > chainparams.GetConsensus().nCompenseHeight{//after reward division and compensation
+            ret = 0.62 * blockValue;
+        }else{
+        }
+    return ret;
+}
+
+int64_t GetBlockRewardMiner(int nHeight, int64_t blockValue){
+    int64_t ret=0;
+    if(nHeight > chainparams.GetConsensus().nCompenseHeight){
+        ret = blockValue - GetBlockRewardPos(nHeight, blockValue) - GetBlockRewardBcpa(nHeight, blockValue) - GetBlockRewardDev(nHeight, blockValue) ;
+    }else{
+        ret = blockValue;
+    }
+    return ret;
+}
+
 bool IsInitialBlockDownload() {
     const CChainParams &chainParams = Params();
 
@@ -2244,33 +2281,15 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
             block.vtx[0]->vout[1].scriptPubKey != scriptPubKeyBcpa || 
             block.vtx[0]->vout[2].scriptPubKey != scriptPubKeyDev 
 	    ) {
-        return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
                          "not the expected scriptPubKey after compense height");
         }
-	if(block.nHeight >  chainparams.GetConsensus().nCompenseHeight + 129600 ){
-            if( block.vtx[0]->vout[0].nValue != 0.84 * blockReward  || 
-                block.vtx[0]->vout[1].nValue != 0.05 * blockReward  || 
-                block.vtx[0]->vout[2].nValue != 0.00999 * blockReward   
-	      ) {
+        if( block.vtx[0]->vout[0].nValue != GetBlockRewardPos(block.nHeight, blockReward)  || 
+            block.vtx[0]->vout[1].nValue != GetBlockRewardBcpa(block.nHeight, blockReward) || 
+            block.vtx[0]->vout[2].nValue != GetBlockRewardDev(block.nHeight, blockReward)   
+          ){ 
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
                          "not the expected block reward division after compense height");
-            }
-	}else( block.nHeight >  chainparams.GetConsensus().nCompenseHeight + 64800 ){
-            if( block.vtx[0]->vout[0].nValue != 0.78 * blockReward  || 
-                block.vtx[0]->vout[1].nValue != 0.05 * blockReward  || 
-                block.vtx[0]->vout[2].nValue != 0.00999 * blockReward   
-	      ) {
-            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-                         "not the expected block reward division after compense height");
-            }
-	}else{
-            if( block.vtx[0]->vout[0].nValue != 0.62 * blockReward  || 
-                block.vtx[0]->vout[1].nValue != 0.05 * blockReward  || 
-                block.vtx[0]->vout[2].nValue != 0.00999 * blockReward   
-	      ) {
-            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-                         "not the expected block reward division after compense height");
-            }
 	}
     }
     
