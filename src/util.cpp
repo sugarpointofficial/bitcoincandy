@@ -88,7 +88,7 @@
 #include <openssl/conf.h>
 #include <openssl/rand.h>
 
-const char *const BITCOIN_CONF_FILENAME = "bitcoincandy.conf";
+const char *const BITCOIN_CONF_FILENAME = "sugarpoint.conf";
 const char *const BITCOIN_PID_FILENAME = "bcandyd.pid";
 
 CCriticalSection cs_args;
@@ -463,7 +463,7 @@ boost::filesystem::path GetDefaultDataDir() {
 // Unix: ~/.bitcoin
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "BitcoinCandy";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "SugarPoint";
 #else
     fs::path pathRet;
     char *pszHome = getenv("HOME");
@@ -473,10 +473,10 @@ boost::filesystem::path GetDefaultDataDir() {
         pathRet = fs::path(pszHome);
 #ifdef MAC_OSX
     // Mac
-    return pathRet / "Library/Application Support/BitcoinCandy";
+    return pathRet / "Library/Application Support/SugarPoint";
 #else
     // Unix
-    return pathRet / ".bitcoincandy";
+    return pathRet / ".sugarpoint";
 #endif
 #endif
 }

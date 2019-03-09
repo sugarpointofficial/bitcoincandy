@@ -517,7 +517,7 @@ public:
     double dMinPing;
     std::string addrLocal;
     CAddress addr;
-    bool fUsesCDYMagic;
+    bool fUsesSGRPTMagic;
 };
 
 class CNetMessage {
@@ -699,7 +699,7 @@ public:
     // Whether a ping is requested.
     std::atomic<bool> fPingQueued;
     // Whether the node uses the bitcoin candy magic to communicate.
-    std::atomic<bool> fUsesCDYMagic;
+    std::atomic<bool> fUsesSGRPTMagic;
     // Minimum fee rate with which to filter inv's to this node
     Amount minFeeFilter;
     CCriticalSection cs_feeFilter;
@@ -751,7 +751,7 @@ public:
     int GetSendVersion() const;
 
     const CMessageHeader::MessageMagic& GetMagic(const CChainParams &params) const {
-        return fUsesCDYMagic ? params.NetMagic() : params.NetMagicLegacy();
+        return fUsesSGRPTMagic ? params.NetMagic() : params.NetMagicLegacy();
     }
 
     CService GetAddrLocal() const;

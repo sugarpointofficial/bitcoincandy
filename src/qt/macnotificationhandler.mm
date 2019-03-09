@@ -13,7 +13,7 @@
 - (NSString *)__bundleIdentifier
 {
     if (self == [NSBundle mainBundle]) {
-        return @"one.bitcoincandy.BitcoinCandy-Qt";
+        return @"one.sugarpoint.SugarPoint-Qt";
     } else {
         return [self __bundleIdentifier];
     }

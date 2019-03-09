@@ -391,7 +391,7 @@ CNode *CConnman::ConnectNode(CAddress addrConnect, const char *pszDest,
                       CalculateKeyedNetGroup(addrConnect), nonce,
                       pszDest ? pszDest : "", false);
         if (fCDYBootstrapping) {
-            pnode->fUsesCDYMagic = false;
+            pnode->fUsesSGRPTMagic = false;
         }
 
         pnode->nServicesExpected =
@@ -674,7 +674,7 @@ void CNode::copyStats(CNodeStats &stats) {
         X(nRecvBytes);
     }
     X(fWhitelisted);
-    X(fUsesCDYMagic);
+    X(fUsesSGRPTMagic);
 
     // It is common for nodes with good ping times to suddenly become lagged,
     // due to a new block arriving or other large transfer. Merely reporting
@@ -2873,7 +2873,7 @@ CNode::CNode(NodeId idIn, ServiceFlags nLocalServicesIn,
     nPingUsecStart = 0;
     nPingUsecTime = 0;
     fPingQueued = false;
-    fUsesCDYMagic = true;
+    fUsesSGRPTMagic = true;
     nMinPingUsecTime = std::numeric_limits<int64_t>::max();
     minFeeFilter = Amount(0);
     lastSentFeeFilter = Amount(0);

@@ -546,7 +546,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>bitcoin-candy</name>
+    <name>sugar-point</name>
     <message>
         <source>Options:</source>
         <translation>Сонголтууд:</translation>

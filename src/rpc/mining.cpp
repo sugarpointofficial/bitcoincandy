@@ -1099,7 +1099,7 @@ static UniValue estimatesmartfee(const Config &config,
             "\nResult:\n"
             "{\n"
             "  \"feerate\" : x.x,     (numeric) estimate fee-per-kilobyte (in "
-            "CDY)\n"
+            "SGRPT)\n"
             "  \"blocks\" : n         (numeric) block number where estimate "
             "was found\n"
             "}\n"

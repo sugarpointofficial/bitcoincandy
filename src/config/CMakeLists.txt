@@ -7,7 +7,7 @@ include(CheckIncludeFiles)
 include(CheckSymbolExists)
 
 # Package informations
-set(PACKAGE_NAME "Bitcoin Candy")
+set(PACKAGE_NAME "Sugar Point")
 
 # Version
 set(CLIENT_VERSION_MAJOR 0)

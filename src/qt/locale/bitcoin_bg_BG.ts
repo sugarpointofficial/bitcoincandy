@@ -418,7 +418,7 @@
     </message>
     </context>
 <context>
-    <name>bitcoin-candy</name>
+    <name>sugar-point</name>
     <message>
         <source>Bitcoin Candy</source>
         <translation>Биткойн ядро</translation>
