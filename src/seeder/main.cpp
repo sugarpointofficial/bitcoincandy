@@ -441,9 +441,9 @@ extern "C" void *ThreadStats(void *) {
 }
 
 static const std::string mainnet_seeds[] = {
-    "s1.bitcoincandy.one",  "s2.bitcoincandy.one", "s3.bitcoincandy.one",  ""};
+    "s1.sugarpoint.one",  "s2.sugarpoint.one", "s3.sugarpoint.one",  ""};
 static const std::string testnet_seeds[] = {
-    "ts1.bitcoincandy.one", ""};
+    "ts1.sugarpoint.one", ""};
 static const std::string *seeds = mainnet_seeds;
 
 const static unsigned int MAX_HOSTS_PER_SEED = 128;
@@ -504,9 +504,9 @@ int main(int argc, char **argv) {
     if (opts.fUseTestNet) {
         printf("Using testnet.\n");
         netMagic[0] = 0xf4;
-        netMagic[1] = 0x43;
-        netMagic[2] = 0x44;
-        netMagic[3] = 0x59;
+        netMagic[1] = 0x53;
+        netMagic[2] = 0x47;
+        netMagic[3] = 0x52;
         seeds = testnet_seeds;
         fTestNet = true;
     }

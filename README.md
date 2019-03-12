@@ -1,7 +1,7 @@
 Bitcoin Candy
 ===========
 
-https://bitcoincandy.one
+https://sugarpoint.one
 
 What is Bitcoin candy?
 Bitcoin candy is a hard fork of Bitcoin Cash. Compared to Bitcoin Cash, it brings more attractive featuresï¼?
@@ -16,7 +16,7 @@ It became a separate currency from the version supported by Bitcoin Cash when th
 Release
 -------
 
-[windows-64bit](https://github.com/bitcoincandyofficial/bitcoincandy/releases/download/0.17.2/bitcoin-qt.exe)
+[windows-64bit](https://github.com/sugarpointofficial/sugarpoint/releases/download/0.17.2/bitcoin-qt.exe)
 
 Currently we only provide windows-64 version of wallet. Wallets for windows-32bit, linux and mac will be released soon. But feel free to compile it by yourself, instructions can be found in src/doc/. 
 

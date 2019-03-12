@@ -194,16 +194,16 @@ public:
         diskMagic[2] = 0xb4;
         diskMagic[3] = 0xd9;
         netMagic[0] = 0xe3;
-        netMagic[1] = 0xc3;	// 0x80 + 0x43 'C'
-        netMagic[2] = 0xc4; // 0x80 + 0x44 'D'
-        netMagic[3] = 0xd9; // 0x80 + 0x59 'Y'
+        netMagic[1] = 0xd3;	// 0x80 + 0x43 'C'
+        netMagic[2] = 0xc7; // 0x80 + 0x44 'D'
+        netMagic[3] = 0xd2; // 0x80 + 0x59 'Y'
         netMagicLegacy[0] = 0xe3; // BCH
         netMagicLegacy[1] = 0xe1; // BCH
         netMagicLegacy[2] = 0xf3; // BCH
         netMagicLegacy[3] = 0xe8; // BCH
 
         // use different default
-        nDefaultPort = 8367;
+        nDefaultPort = 8377;
 	nBitcoinDefaultPort = 8333;
         nPruneAfterHeight = 100000;
         const size_t N = 200, K = 9;
@@ -229,7 +229,7 @@ public:
         // subset of possible options.
         // Bitcoin ABC seeder
         vSeeds.push_back(
-            CDNSSeedData("bitcoincandy.one", "seed.bitcoincandy.one", true));
+            CDNSSeedData("sugarpoint.one", "seed.sugarpoint.one", true));
         vSeeds.push_back(CDNSSeedData("cdy.one", "seed.cdy.one", true));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<uint8_t>(1, 0x1c); // 'C'
@@ -237,7 +237,7 @@ public:
         base58Prefixes[SECRET_KEY] = std::vector<uint8_t>(1, 128);
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x88, 0xB2, 0x1E};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x88, 0xAD, 0xE4};
-        cashaddrPrefix = "bitcoincandy";
+        cashaddrPrefix = "sugarpoint";
 
         vFixedSeeds = std::vector<SeedSpec6>(
             pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
@@ -393,9 +393,9 @@ public:
         diskMagic[2] = 0x09;
         diskMagic[3] = 0x07;
         netMagic[0] = 0xf4;
-        netMagic[1] = 0x43;	// 'C'
-        netMagic[2] = 0x44; // 'D'
-        netMagic[3] = 0x59; // 'Y'
+        netMagic[1] = 0x53;	// 'C'
+        netMagic[2] = 0x47; // 'D'
+        netMagic[3] = 0x52; // 'Y'
         // BTC
         netMagicLegacy[0] = 0x0b;
         netMagicLegacy[1] = 0x11;
@@ -408,7 +408,7 @@ public:
         // netMagicLegacy[3] = 0xf4;
 
         // use different default
-        nDefaultPort = 18367;
+        nDefaultPort = 18377;
 	nBitcoinDefaultPort = 18333;
         nPruneAfterHeight = 1000;
         const size_t N = 200, K = 9;
@@ -433,7 +433,7 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
-        vSeeds.push_back(CDNSSeedData("bitcoincandy.one", "testnet-seed.bitcoincandy.one", true));
+        vSeeds.push_back(CDNSSeedData("sugarpoint.one", "testnet-seed.sugarpoint.one", true));
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<uint8_t>(1, 111);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<uint8_t>(1, 196);
         base58Prefixes[SECRET_KEY] = std::vector<uint8_t>(1, 239);

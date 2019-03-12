@@ -887,7 +887,7 @@ std::string HelpMessage(HelpMessageMode mode) {
 
 std::string LicenseInfo() {
     const std::string URL_SOURCE_CODE =
-        "<https://github.com/bitcoincandyofficial/bitcoincandy>";
+        "<https://github.com/sugarpointofficial/sugarpoint>";
     const std::string URL_WEBSITE = "<http://cdy.one";
 
     return CopyrightHolders(

@@ -2988,7 +2988,7 @@
     </message>
 </context>
 <context>
-    <name>bitcoin-candy</name>
+    <name>sugar-point</name>
     <message>
         <source>Options:</source>
         <translation>Options :</translation>

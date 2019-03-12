@@ -86,7 +86,7 @@ Ubuntu Artful 17.10 <sup>[2](#footnote2)</sup>:
 	
 Acquire the source in the usual way:
 
-    git clone https://github.com/bitcoincandyofficial/bitcoincandy.git
+    git clone https://github.com/sugarpointofficial/sugarpoint.git
 
 Then build using:
 
@@ -109,7 +109,7 @@ For Ubuntu Xenial 16.04, Ubuntu Artful 17.10 and Windows Subsystem for Linux <su
 
 Acquire the source in the usual way:
 
-    git clone https://github.com/bitcoincandyofficial/bitcoincandy.git
+    git clone https://github.com/sugarpointofficial/sugarpoint.git
 	
 Then build using:
 

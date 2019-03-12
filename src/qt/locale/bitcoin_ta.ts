@@ -706,7 +706,7 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>bitcoin-candy</name>
+    <name>sugar-point</name>
     <message>
         <source>Bitcoin Candy</source>
         <translation>Bitcoin மையம்</translation>

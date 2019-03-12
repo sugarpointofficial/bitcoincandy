@@ -1597,7 +1597,7 @@ static bool ProcessMessage(const Config &config, CNode *pfrom,
                   pfrom->addr.ToString().c_str(), cleanSubVer, pfrom->nVersion,
                   pfrom->nStartingHeight, addrMe.ToString(), pfrom->id,
                   remoteAddr);
-        if (pfrom->fUsesCDYMagic) {
+        if (pfrom->fUsesSGRPTMagic) {
             LogPrintf("peer %d uses CDY magic in its headers\n", pfrom->id);
         }
 
@@ -3158,10 +3158,10 @@ bool ProcessMessages(const Config &config, CNode *pfrom, CConnman &connman,
     // the peer is using.
     if (pfrom->nVersion == 0) {
         if (memcmp(std::begin(msg.hdr.pchMessageStart), std::begin(chainparams.NetMagic()), CMessageHeader::MESSAGE_START_SIZE) == 0) {
-            pfrom->fUsesCDYMagic = true;
+            pfrom->fUsesSGRPTMagic = true;
         } else if (fCDYBootstrapping) {
             // Allow to connect to Bitcoin clients when bootstrapping.
-            pfrom->fUsesCDYMagic = false;
+            pfrom->fUsesSGRPTMagic = false;
         }
     }
 

@@ -3865,7 +3865,7 @@
     </message>
 </context>
 <context>
-    <name>bitcoin-candy</name>
+    <name>sugar-point</name>
     <message>
         <location filename="../bitcoinstrings.cpp" line="+318"/>
         <source>Options:</source>
