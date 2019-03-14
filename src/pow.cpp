@@ -124,12 +124,16 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     double adjust = 1;//0.998;
     
     assert(height > N);
-    if(height>nNewRuleHeight) N = 45;
-    arith_uint256 sum_target, sum_last10_target,sum_last5_target;
+    
+    //N = 60 again because of 5,10 window  N=45 for fast adapt temporally
+    if(height>nNewRuleHeight) N = 60;
+    arith_uint256 sum_target, sum_last10_target,sum_last05_target;
     int sum_time = 0, nWeight = 0;
     
     int sum_last10_time=0;  //Solving time of the last ten block
-    int sum_last5_time=0;
+    int sum_last05_time=0;  //Solving time of the last five block
+    int sum_last03_time=0;  //Solving time of the last three block
+    int sum_last02_time=0;  //Solving time of the last two block
 
     // Loop through N most recent blocks.
     for (int i = height - N; i < height; i++) {
@@ -160,6 +164,18 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
             }     
 
         }       
+        if(i >= height-5) 
+        {
+            sum_last05_time += solvetime;
+        }       
+        if(i >= height-3) 
+        {
+            sum_last03_time += solvetime;
+        }       
+        if(i >= height-2) 
+        {
+            sum_last02_time += solvetime;
+        }       
 
     }
     
@@ -173,37 +189,105 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     const arith_uint256 pow_limit = UintToArith256(params.PowLimit(true));
     
     
-    arith_uint256 next_target;
-    next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T;  // next_target = LWMA * avgTarget * adjust /T;   
-    
-    /*if the last 10 blocks are generated in 5 minutes, we tripple the difficulty of average of the last 10 blocks*/
-     if(height>CDYEquihashForkHeight && sum_last5_time <= 90)
-    {
-        arith_uint256 avg_last5_target;
-        avg_last5_target = sum_last5_target/5;
-        if(next_target > avg_last5_target/4)  next_target = avg_last5_target/4;   
-    }else if(height>nNewRuleHeight && sum_last10_time <= 5*60)   
+    arith_uint256 next_target, last10_target, last05_target, last03_target, last02_target, last_target;
+    next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T;  // next_target = LWMA * avgTarget * adjust /T; 
+    last10_target = next_target;
+    last05_target = next_target;
+    last03_target = next_target;
+    last02_target = next_target;
+    last_target.SetCompact(pindexPrev->nBits);   
+
+    /*if the last 10 blocks are generated in short minutes, we increase the difficulty of last blocks*/
+    // last 10 block time : 10 15 20 add 30 minute 
+    // ref : https://steemit.com/cdy/@bluejaytodd/bitcoin-candy-cdy-block-time
+    if(height>nNewRuleHeight && sum_last10_time <= 10*60)   
     {  
-        arith_uint256 avg_last10_target;
-        avg_last10_target = sum_last10_target/10;
-        if(next_target > avg_last10_target/2)  next_target = avg_last10_target/2;   
+        if(next_target > last_target*3/4)  last10_target = last_target*3/4;   
     }
-    else if(height>nNewRuleHeight && sum_last10_time <= 10*60)
+    else if(height>nNewRuleHeight && sum_last10_time <= 15*60)
     {            
-        arith_uint256 avg_last10_target;
-        avg_last10_target = sum_last10_target/10;
-        if(next_target > avg_last10_target*2/3)  next_target = avg_last10_target*2/3;   
+        if(next_target > last_target*4/5)  last10_target = last_target*4/5;   
     }
-    
-    if(height>nNewRuleHeight)
-    {
-        arith_uint256 last_target;
+    else if(height>nNewRuleHeight && sum_last10_time <= 20*60)
+    {            
+        if(next_target > last_target*5/6)  last10_target = last_target*5/6;   
+    }
+    else if(height>nNewRuleHeight && sum_last10_time <= 30*60)
+    {            
+        if(next_target > last_target*6/7)  last10_target = last_target*6/7;   
+    };
+    /*if the last 5 blocks are generated in short time, we increase the difficulty of last blocks*/
+    // last 5 block time : 5.0  7.5 10 15 minute 
+    if(height>nNewRuleHeight && sum_last05_time <= 5*60)   
+    {  
+        if(next_target > last_target*3/4)  last05_target = last_target*3/4;   
+    }
+    else if(height>nNewRuleHeight && sum_last05_time <= 7.5*60)
+    {            
+        if(next_target > last_target*4/5)  last05_target = last_target*4/5;   
+    }
+    else if(height>nNewRuleHeight && sum_last05_time <= 10*60)
+    {            
+        if(next_target > last_target*5/6)  last05_target = last_target*5/6;   
+    } 
+    else if(height>nNewRuleHeight && sum_last05_time <= 15*60)
+    {            
+        if(next_target > last_target*6/7)  last05_target = last_target*6/7;   
+    };
+    // last 3 block time :  1.5 3 6 minute 
+    if(height>nNewRuleHeight && sum_last03_time <= 1.5*60)   
+    {  
+        if(next_target > last_target*2/3)  last03_target = last_target*2/3;   
+    }
+    else if(height>nNewRuleHeight && sum_last03_time <= 3*60)
+    {            
+        if(next_target > last_target*3/4)  last03_target = last_target*3/4;   
+    }
+    else if(height>nNewRuleHeight && sum_last03time <= 6*60)
+    {            
+        if(next_target > last_target*5/6)  last03target = last_target*5/6;   
+    } 
+    // last 2 block time :  1 2 4  minute 
+    if(height>nNewRuleHeight && sum_last03_time <= 1*60)   
+    {  
+        if(next_target > last_target*2/3)  last02_target = last_target*2/3;   
+    }
+    else if(height>nNewRuleHeight && sum_last02_time <= 2*60)
+    {            
+        if(next_target > last_target*3/4)  last02_target = last_target*3/4;   
+    }
+    else if(height>nNewRuleHeight && sum_last02_time <= 4*60)
+    {            
+        if(next_target > last_target*5/6)  last02_target = last_target*5/6;   
+    } 
+
+    /* set next_target by 10,5 last block time */
+    // last10_target, last05_target reduce continuous short_time_blocks( ex 0.0~1.0 minute block time) 
+    // But average block time exceed 2 minute. LWMA window method make average block time 2 minute without upper condition. 
+    // Averge block time would increase by about 0.65*7/6 + 0.3 =1.058(5.8%). 
+    if(next_target > last10_target ) next_target = last10_target ;
+    if(next_target > last05_target ) next_target = last05_target ;
+    if(next_target > last03_target ) next_target = last03_target ;
+    if(next_target > last02_target ) next_target = last02_target ;
+
+    /* Compare current time and last block time 
+     * If block is not generated for 1 hour, increase next_target by 30%  */
+    int64_t current_time = GetAdjustedTime();  
+    int64_t time_last_block_generated  = pindexPrev ->GetBlockTime()  ;
+    int mining_hours =(int) (( current_time - time_last_block_generated)/3600); 
+    if(mining_hours<0) mining_hours =  0;
+    if( height>nNewRuleHeight ){
         last_target.SetCompact(pindexPrev->nBits);       
         if(next_target> last_target*13/10) next_target = last_target*13/10;    
         /*in case difficulty drops too soon compared to the last block, especially
          *when the effect of the last rule wears off in the new block
          *DAA will switch to normal LWMA and cause dramatically diff drops*/
     }
+    if(height>nNewRuleHeight && 0< mining_hours ){             
+        for(int i=0; i<mining_hours; i++) next_target *=13/10; 
+        //For each hour no_new_block was found, increase target 30%
+    }
+
     if (next_target > pow_limit ){
         return pow_limit.GetCompact();
     }
