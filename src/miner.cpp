@@ -171,6 +171,7 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
     CBlockIndex *pindexPrev = chainActive.Tip();
     nHeight = pindexPrev->nHeight + 1;
 
+    /* remove redundant code
     bool fCompense = false;
     CScript scriptPubKeyCompense;
     if (nHeight == chainparams.GetConsensus().nCompenseHeight) {
@@ -194,7 +195,7 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
 	sDivReward = chainparams.GetConsensus().sBcpaAddress;//
         destination = DecodeDestination(sDivReward);
         scriptPubKeyBcpa = GetScriptForDestination(destination);
-    }
+    }*/
     
     pblock->nVersion =
         ComputeBlockVersion(pindexPrev, chainparams.GetConsensus());
@@ -226,6 +227,8 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
     CMutableTransaction coinbaseTx;
     coinbaseTx.vin.resize(1);
     coinbaseTx.vin[0].prevout.SetNull();
+
+    /* remove redundant code 
     Amount blockReward =
          nFees +   GetBlockSubsidy(nHeight, chainparams.GetConsensus());
     if (nHeight > chainparams.GetConsensus().nCompenseHeight ) {
@@ -269,6 +272,14 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
         pblock->vtx[0] = MakeTransactionRef(coinbaseTx);
         pblocktemplate->vTxFees[0] = -1 * nFees;
     }
+    */
+    coinbaseTx.vout.resize(1);
+    coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
+    coinbaseTx.vout[0].nValue =
+        nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
+    coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
+    pblock->vtx[0] = MakeTransactionRef(coinbaseTx);
+    pblocktemplate->vTxFees[0] = -1 * nFees;
 
     const Consensus::Params& params = chainparams.GetConsensus();
     int ser_flags = (nHeight < params.cdyHeight) ? SERIALIZE_BLOCK_LEGACY : 0;
