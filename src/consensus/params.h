@@ -62,6 +62,9 @@ struct Params {
     uint32_t nCompenseHeight;
     
     std::string sCompenseAddress;
+    std::string sPosAddress;
+    std::string sDevAddress;
+    std::string sBcpaAddress;
     
     /** Limit BITCOIN_MAX_FUTURE_BLOCK_TIME **/
     int64_t CDYMaxFutureBlockTime;

@@ -1252,6 +1252,44 @@ Amount GetBlockSubsidy(int nHeight, const Consensus::Params &consensusParams) {
     return Amount(nSubsidy.GetSatoshis() >> halvings);
 }
 
+Amount GetBlockRewardBcpa(int nHeight, Amount blockValue,const Consensus::Params &consensusParams){
+    int64_t ret = 0;
+    if (nHeight > consensusParams.nCompenseHeight )
+        ret = blockValue.GetSatoshis()*0.05;
+    return Amount(ret);
+}
+
+Amount GetBlockRewardDev(int nHeight, Amount blockValue,const Consensus::Params &consensusParams){
+    int64_t ret = 0;
+    if (nHeight > consensusParams.nCompenseHeight )
+        ret = blockValue.GetSatoshis()*0.01;
+    return Amount(ret);
+}
+
+Amount GetBlockRewardPos(int nHeight, Amount blockValue,const Consensus::Params &consensusParams){
+    int64_t ret=0;
+        if(nHeight > consensusParams.nCompenseHeight + 129600 ){// after 6 month
+            ret = 0.84 * blockValue.GetSatoshis();
+        }else if(nHeight > consensusParams.nCompenseHeight + 64800 ){//after 3 month
+            ret = 0.78 * blockValue.GetSatoshis();
+        }else if(nHeight > consensusParams.nCompenseHeight){//after reward division and compensation
+            ret = 0.62 * blockValue.GetSatoshis();
+        }else{
+        }
+    return Amount(ret);
+}
+
+Amount GetBlockRewardMiner(int nHeight, Amount blockValue,const Consensus::Params &consensusParams){
+    //int64_t ret=0;
+    Amount Aret(0);
+    if(nHeight > consensusParams.nCompenseHeight){
+        Aret = blockValue - GetBlockRewardPos(nHeight, blockValue, consensusParams) - GetBlockRewardBcpa(nHeight, blockValue,consensusParams) - GetBlockRewardDev(nHeight, blockValue,consensusParams) ;
+    }else{
+        Aret = blockValue;
+    }
+    return Aret;
+}
+
 bool IsInitialBlockDownload() {
     const CChainParams &chainParams = Params();
 
@@ -2225,6 +2263,35 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
         return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
                          "not the expected scriptPubKey at compense height");
         }
+    }
+    if (block.nHeight > chainparams.GetConsensus().nCompenseHeight ) {
+        CScript scriptPubKeyPos,scriptPubKeyBcpa, scriptPubKeyDev, scriptPubKeyMiner;
+        std::string sRewardAddress = chainparams.GetConsensus().sPosAddress;
+        CTxDestination destination = DecodeDestination(sRewardAddress);
+        scriptPubKeyPos = GetScriptForDestination(destination);
+        
+	sRewardAddress = chainparams.GetConsensus().sBcpaAddress;
+        destination = DecodeDestination(sRewardAddress);
+        scriptPubKeyBcpa = GetScriptForDestination(destination);
+        
+	sRewardAddress = chainparams.GetConsensus().sDevAddress;
+        destination = DecodeDestination(sRewardAddress);
+        scriptPubKeyDev = GetScriptForDestination(destination);
+        if (block.vtx[0]->vout.size()< 3 || 
+            block.vtx[0]->vout[0].scriptPubKey != scriptPubKeyPos || 
+            block.vtx[0]->vout[1].scriptPubKey != scriptPubKeyBcpa || 
+            block.vtx[0]->vout[2].scriptPubKey != scriptPubKeyDev 
+	    ) {
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
+                         "not the expected scriptPubKey after compense height");
+        }
+        if( block.vtx[0]->vout[0].nValue != GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus())  || 
+            block.vtx[0]->vout[1].nValue != GetBlockRewardBcpa(block.nHeight, blockReward, chainparams.GetConsensus()) || 
+            block.vtx[0]->vout[2].nValue != GetBlockRewardDev(block.nHeight, blockReward, chainparams.GetConsensus())   
+          ){ 
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
+                         "not the expected block reward division after compense height");
+	}
     }
     
     if (!control.Wait()) {
