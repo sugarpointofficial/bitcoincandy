@@ -171,7 +171,7 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
     CBlockIndex *pindexPrev = chainActive.Tip();
     nHeight = pindexPrev->nHeight + 1;
 
-    /* remove redundant code
+    //remove redundant code
     bool fCompense = false;
     CScript scriptPubKeyCompense;
     if (nHeight == chainparams.GetConsensus().nCompenseHeight) {
@@ -184,7 +184,7 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
     CScript scriptPubKeyDev;
     CScript scriptPubKeyBcpa;
     if (nHeight > chainparams.GetConsensus().nCompenseHeight ) {
-        std::string  sDivReward = chainparams.GetConsensus().sDevAddress;
+        std::string  sDivReward = chainparams.GetConsensus().sPosAddress;
         CTxDestination destination = DecodeDestination(sDivReward);
         scriptPubKeyPos = GetScriptForDestination(destination);
         
@@ -195,7 +195,8 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
 	sDivReward = chainparams.GetConsensus().sBcpaAddress;//
         destination = DecodeDestination(sDivReward);
         scriptPubKeyBcpa = GetScriptForDestination(destination);
-    }*/
+    }
+    // redundant
     
     pblock->nVersion =
         ComputeBlockVersion(pindexPrev, chainparams.GetConsensus());
@@ -228,20 +229,20 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
     coinbaseTx.vin.resize(1);
     coinbaseTx.vin[0].prevout.SetNull();
 
-    /* remove redundant code 
+    // remove redundant code 
     Amount blockReward =
          nFees +   GetBlockSubsidy(nHeight, chainparams.GetConsensus());
     if (nHeight > chainparams.GetConsensus().nCompenseHeight ) {
         coinbaseTx.vout.resize(4);
-        coinbaseTx.vout[0].scriptPubKey =  scriptPubKeyPos;
-        coinbaseTx.vout[1].scriptPubKey =  scriptPubKeyBcpa;
-        coinbaseTx.vout[2].scriptPubKey =  scriptPubKeyDev;
-        coinbaseTx.vout[3].scriptPubKey =  scriptPubKeyIn;
+        coinbaseTx.vout[1].scriptPubKey =  scriptPubKeyPos;
+        coinbaseTx.vout[2].scriptPubKey =  scriptPubKeyBcpa;
+        coinbaseTx.vout[3].scriptPubKey =  scriptPubKeyDev;
+        coinbaseTx.vout[0].scriptPubKey =  scriptPubKeyIn;
 
-        coinbaseTx.vout[0].nValue = GetBlockRewardPos(nHeight, blockReward,chainparams.GetConsensus());   //0.84, 0.76, 0.62 * blockReward;
-        coinbaseTx.vout[1].nValue = GetBlockRewardBcpa(nHeight, blockReward,chainparams.GetConsensus());  //0.05 * blockReward;
-        coinbaseTx.vout[2].nValue = GetBlockRewardDev(nHeight, blockReward,chainparams.GetConsensus());   //0.01 * blockReward;
-        coinbaseTx.vout[3].nValue = GetBlockRewardMiner(nHeight, blockReward,chainparams.GetConsensus()); //0.32, 0.16, 0.10 * blockReward;
+        coinbaseTx.vout[1].nValue = GetBlockRewardPos(nHeight, blockReward,chainparams.GetConsensus());   //0.84, 0.76, 0.62 * blockReward;
+        coinbaseTx.vout[2].nValue = GetBlockRewardBcpa(nHeight, blockReward,chainparams.GetConsensus());  //0.05 * blockReward;
+        coinbaseTx.vout[3].nValue = GetBlockRewardDev(nHeight, blockReward,chainparams.GetConsensus());   //0.01 * blockReward;
+        coinbaseTx.vout[0].nValue = GetBlockRewardMiner(nHeight, blockReward,chainparams.GetConsensus()); //0.32, 0.16, 0.10 * blockReward;
 	//if(nHeight > chainparams.GetConsensus().nCompenseHeight + 129600 ){// after 6 month
         //    coinbaseTx.vout[0].nValue = 0.84 * blockReward;
         //    coinbaseTx.vout[3].nValue = 0.10 * blockReward;
@@ -272,7 +273,7 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
         pblock->vtx[0] = MakeTransactionRef(coinbaseTx);
         pblocktemplate->vTxFees[0] = -1 * nFees;
     }
-    */
+    /*
     coinbaseTx.vout.resize(1);
     coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
     coinbaseTx.vout[0].nValue =
@@ -280,7 +281,7 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
     coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
     pblock->vtx[0] = MakeTransactionRef(coinbaseTx);
     pblocktemplate->vTxFees[0] = -1 * nFees;
-
+    */
     const Consensus::Params& params = chainparams.GetConsensus();
     int ser_flags = (nHeight < params.cdyHeight) ? SERIALIZE_BLOCK_LEGACY : 0;
     uint64_t nSerializeSize = GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION | ser_flags);
