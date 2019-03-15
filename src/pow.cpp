@@ -18,6 +18,7 @@
 #include "uint256.h"
 #include "util.h"
 #include "validation.h"
+#include "timedata.h"
 
 unsigned int BitcoinGetNextWorkRequired(const CBlockIndex* pindexPrev, const CBlockHeader *pblock, const Consensus::Params& params);
 
@@ -156,13 +157,6 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
         if(i >= height-10) 
         {
             sum_last10_time += solvetime;
-            sum_last10_target += target;
-	    if(i >= height-5) 
-            {
-              sum_last5_time += solvetime;
-              sum_last5_target += target;
-            }     
-
         }       
         if(i >= height-5) 
         {
@@ -243,12 +237,12 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     {            
         if(next_target > last_target*3/4)  last03_target = last_target*3/4;   
     }
-    else if(height>nNewRuleHeight && sum_last03time <= 6*60)
+    else if(height>nNewRuleHeight && sum_last03_time <= 6*60)
     {            
-        if(next_target > last_target*5/6)  last03target = last_target*5/6;   
+        if(next_target > last_target*5/6)  last03_target = last_target*5/6;   
     } 
     // last 2 block time :  1 2 4  minute 
-    if(height>nNewRuleHeight && sum_last03_time <= 1*60)   
+    if(height>nNewRuleHeight && sum_last02_time <= 1*60)   
     {  
         if(next_target > last_target*2/3)  last02_target = last_target*2/3;   
     }

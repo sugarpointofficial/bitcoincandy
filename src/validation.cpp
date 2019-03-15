@@ -1255,7 +1255,7 @@ Amount GetBlockSubsidy(int nHeight, const Consensus::Params &consensusParams) {
 Amount GetBlockRewardBcpa(int nHeight, Amount blockValue,const Consensus::Params &consensusParams){
     int64_t ret = 0;
     if (nHeight > consensusParams.nCompenseHeight )
-        ret = blockValue.GetSatoshis()*0.05;
+        ret = blockValue.GetSatoshis()*0.10;
     return Amount(ret);
 }
 
@@ -1269,11 +1269,11 @@ Amount GetBlockRewardDev(int nHeight, Amount blockValue,const Consensus::Params 
 Amount GetBlockRewardPos(int nHeight, Amount blockValue,const Consensus::Params &consensusParams){
     int64_t ret=0;
         if(nHeight > consensusParams.nCompenseHeight + 129600 ){// after 6 month
-            ret = 0.84 * blockValue.GetSatoshis();
+            ret = 0.815 * blockValue.GetSatoshis();
         }else if(nHeight > consensusParams.nCompenseHeight + 64800 ){//after 3 month
-            ret = 0.78 * blockValue.GetSatoshis();
+            ret = 0.755 * blockValue.GetSatoshis();
         }else if(nHeight > consensusParams.nCompenseHeight){//after reward division and compensation
-            ret = 0.62 * blockValue.GetSatoshis();
+            ret = 0.595 * blockValue.GetSatoshis();
         }else{
         }
     return Amount(ret);
