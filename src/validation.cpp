@@ -2278,16 +2278,16 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
         destination = DecodeDestination(sRewardAddress);
         scriptPubKeyDev = GetScriptForDestination(destination);
         if (block.vtx[0]->vout.size()< 3 || 
-            block.vtx[0]->vout[1].scriptPubKey != scriptPubKeyPos || 
-            block.vtx[0]->vout[2].scriptPubKey != scriptPubKeyBcpa || 
-            block.vtx[0]->vout[3].scriptPubKey != scriptPubKeyDev 
+            block.vtx[0]->vout[0].scriptPubKey != scriptPubKeyPos || 
+            block.vtx[0]->vout[1].scriptPubKey != scriptPubKeyBcpa || 
+            block.vtx[0]->vout[2].scriptPubKey != scriptPubKeyDev 
 	    ) {
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
                          "not the expected scriptPubKey after compense height");
         }
-        if( block.vtx[0]->vout[1].nValue != GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus())  || 
-            block.vtx[0]->vout[2].nValue != GetBlockRewardBcpa(block.nHeight, blockReward, chainparams.GetConsensus()) || 
-            block.vtx[0]->vout[3].nValue != GetBlockRewardDev(block.nHeight, blockReward, chainparams.GetConsensus())   
+        if( block.vtx[0]->vout[0].nValue != GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus())  || 
+            block.vtx[0]->vout[1].nValue != GetBlockRewardBcpa(block.nHeight, blockReward, chainparams.GetConsensus()) || 
+            block.vtx[0]->vout[2].nValue != GetBlockRewardDev(block.nHeight, blockReward, chainparams.GetConsensus())   
           ){ 
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
                          "not the expected block reward division after compense height");

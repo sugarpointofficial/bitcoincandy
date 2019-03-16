@@ -277,10 +277,10 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
          *when the effect of the last rule wears off in the new block
          *DAA will switch to normal LWMA and cause dramatically diff drops*/
     }
-    if(height>nNewRuleHeight && 0< mining_hours ){             
-        for(int i=0; i<mining_hours; i++) next_target *=13/10; 
+    //if(height>nNewRuleHeight && 0< mining_hours ){             
+        //for(int i=0; i<mining_hours; i++) next_target *=13/10; 
         //For each hour no_new_block was found, increase target 30%
-    }
+    //}
 
     if (next_target > pow_limit ){
         return pow_limit.GetCompact();
