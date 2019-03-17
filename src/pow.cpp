@@ -123,11 +123,13 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     const int nNewRuleHeight = params.nNewRuleHeight;
     const int CDYEquihashForkHeight= params.CDYEquihashForkHeight; 
     double adjust = 1;//0.998;
+    double adjust_fast_adapt = 1.2;//with fast adapt block time is larger  than 120s
     
     assert(height > N);
     
     //N = 60 again because of 5,10 window  N=45 for fast adapt temporally
-    if(height>nNewRuleHeight) N = 60;
+    //N = 360 after nCompenseHeight with fast adaptaion last02,03,05,10 
+    if(height> params.nCompenseHeight ) N = 360;
     arith_uint256 sum_target, sum_last10_target,sum_last05_target;
     int sum_time = 0, nWeight = 0;
     
@@ -144,6 +146,7 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
         
         //in case difficulty drops too fast
         if(height>nNewRuleHeight && solvetime>=8*T)  solvetime = 8 * T;
+        if(height>params.nCompenseHeight && solvetime<=T/8)  solvetime = T/8;
         
         nWeight++;
         sum_time += solvetime * nWeight;  // Weighted solvetime sum. The nearsest blocks get the most weight. 
@@ -184,7 +187,7 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     
     
     arith_uint256 next_target, last10_target, last05_target, last03_target, last02_target, last_target;
-    next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T;  // next_target = LWMA * avgTarget * adjust /T; 
+    next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T * adjust_fast_adapt;  // next_target = LWMA * avgTarget * adjust /T; 
     last10_target = next_target;
     last05_target = next_target;
     last03_target = next_target;
