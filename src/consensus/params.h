@@ -60,6 +60,10 @@ struct Params {
     int CDYEquihashForkHeight;
     /** Height to publish compensing coins*/
     uint32_t nCompenseHeight;
+    /** Height Sgrpt Forkid apply  */
+    uint32_t nSgrptForkidHeight;
+    /** Height to inplation 1%/year */
+    uint32_t nInflationHeight;
     
     std::string sCompenseAddress;
     std::string sPosAddress;

@@ -126,13 +126,13 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     double adjust_fast_adapt = 1.2;//with fast adapt block time is larger  than 120s
     
     assert(height > N);
-    
+    if(height>nNewRuleHeight) N = 45; 
     //N = 60 again because of 5,10 window  N=45 for fast adapt temporally
     //N = 360 after nCompenseHeight with fast adaptaion last02,03,05,10 
     if(height> params.nCompenseHeight ) N = 360;
     arith_uint256 sum_target, sum_last10_target,sum_last05_target;
     int sum_time = 0, nWeight = 0;
-    
+
     int sum_last10_time=0;  //Solving time of the last ten block
     int sum_last05_time=0;  //Solving time of the last five block
     int sum_last03_time=0;  //Solving time of the last three block
@@ -160,10 +160,12 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
         if(i >= height-10) 
         {
             sum_last10_time += solvetime;
+            sum_last10_target += target;
         }       
         if(i >= height-5) 
         {
             sum_last05_time += solvetime;
+            sum_last05_target += target;
         }       
         if(i >= height-3) 
         {
@@ -187,7 +189,9 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     
     
     arith_uint256 next_target, last10_target, last05_target, last03_target, last02_target, last_target;
-    next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T * adjust_fast_adapt;  // next_target = LWMA * avgTarget * adjust /T; 
+    next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T ;  // next_target = LWMA * avgTarget * adjust /T; 
+    if(height>params.nCompenseHeight )
+        next_target *= adjust_fast_adapt; // because fast adaptation need to increase target
     last10_target = next_target;
     last05_target = next_target;
     last03_target = next_target;
@@ -197,63 +201,63 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     /*if the last 10 blocks are generated in short minutes, we increase the difficulty of last blocks*/
     // last 10 block time : 10 15 20 add 30 minute 
     // ref : https://steemit.com/cdy/@bluejaytodd/bitcoin-candy-cdy-block-time
-    if(height>nNewRuleHeight && sum_last10_time <= 10*60)   
+    if(height>params.nCompenseHeight  && sum_last10_time <= 10*60)   
     {  
         if(next_target > last_target*3/4)  last10_target = last_target*3/4;   
     }
-    else if(height>nNewRuleHeight && sum_last10_time <= 15*60)
+    else if(height>params.nCompenseHeight  && sum_last10_time <= 15*60)
     {            
         if(next_target > last_target*4/5)  last10_target = last_target*4/5;   
     }
-    else if(height>nNewRuleHeight && sum_last10_time <= 20*60)
+    else if(height>params.nCompenseHeight  && sum_last10_time <= 20*60)
     {            
         if(next_target > last_target*5/6)  last10_target = last_target*5/6;   
     }
-    else if(height>nNewRuleHeight && sum_last10_time <= 30*60)
+    else if(height>params.nCompenseHeight  && sum_last10_time <= 30*60)
     {            
         if(next_target > last_target*6/7)  last10_target = last_target*6/7;   
     };
     /*if the last 5 blocks are generated in short time, we increase the difficulty of last blocks*/
     // last 5 block time : 5.0  7.5 10 15 minute 
-    if(height>nNewRuleHeight && sum_last05_time <= 5*60)   
+    if(height>params.nCompenseHeight  && sum_last05_time <= 5*60)   
     {  
         if(next_target > last_target*3/4)  last05_target = last_target*3/4;   
     }
-    else if(height>nNewRuleHeight && sum_last05_time <= 7.5*60)
+    else if(height>params.nCompenseHeight  && sum_last05_time <= 7.5*60)
     {            
         if(next_target > last_target*4/5)  last05_target = last_target*4/5;   
     }
-    else if(height>nNewRuleHeight && sum_last05_time <= 10*60)
+    else if(height>params.nCompenseHeight  && sum_last05_time <= 10*60)
     {            
         if(next_target > last_target*5/6)  last05_target = last_target*5/6;   
     } 
-    else if(height>nNewRuleHeight && sum_last05_time <= 15*60)
+    else if(height>params.nCompenseHeight && sum_last05_time <= 15*60)
     {            
         if(next_target > last_target*6/7)  last05_target = last_target*6/7;   
     };
     // last 3 block time :  1.5 3 6 minute 
-    if(height>nNewRuleHeight && sum_last03_time <= 1.5*60)   
+    if(height>params.nCompenseHeight && sum_last03_time <= 1.5*60)   
     {  
         if(next_target > last_target*2/3)  last03_target = last_target*2/3;   
     }
-    else if(height>nNewRuleHeight && sum_last03_time <= 3*60)
+    else if(height>params.nCompenseHeight && sum_last03_time <= 3*60)
     {            
         if(next_target > last_target*3/4)  last03_target = last_target*3/4;   
     }
-    else if(height>nNewRuleHeight && sum_last03_time <= 6*60)
+    else if(height>params.nCompenseHeight && sum_last03_time <= 6*60)
     {            
         if(next_target > last_target*5/6)  last03_target = last_target*5/6;   
     } 
     // last 2 block time :  1 2 4  minute 
-    if(height>nNewRuleHeight && sum_last02_time <= 1*60)   
+    if(height>params.nCompenseHeight && sum_last02_time <= 1*60)   
     {  
         if(next_target > last_target*2/3)  last02_target = last_target*2/3;   
     }
-    else if(height>nNewRuleHeight && sum_last02_time <= 2*60)
+    else if(height>params.nCompenseHeight && sum_last02_time <= 2*60)
     {            
         if(next_target > last_target*3/4)  last02_target = last_target*3/4;   
     }
-    else if(height>nNewRuleHeight && sum_last02_time <= 4*60)
+    else if(height>params.nCompenseHeight && sum_last02_time <= 4*60)
     {            
         if(next_target > last_target*5/6)  last02_target = last_target*5/6;   
     } 
@@ -266,6 +270,30 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     if(next_target > last05_target ) next_target = last05_target ;
     if(next_target > last03_target ) next_target = last03_target ;
     if(next_target > last02_target ) next_target = last02_target ;
+
+
+    /*if the last 10 blocks are generated in 5 minutes, we tripple the difficulty of average of the last 10 blocks*/
+    if(height>nNewRuleHeight && height <=params.nCompenseHeight ) {
+        next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T;  // next_target = LWMA * avgTarget * adjust /T;
+
+        if(height>CDYEquihashForkHeight && sum_last05_time <= 90)
+        {
+            arith_uint256 avg_last05_target;
+            avg_last05_target = sum_last05_target/5;
+            if(next_target > avg_last05_target/4)  next_target = avg_last05_target/4;
+        }else if(height>nNewRuleHeight && sum_last10_time <= 5*60)   
+        {  
+            arith_uint256 avg_last10_target;
+            avg_last10_target = sum_last10_target/10;
+            if(next_target > avg_last10_target/2)  next_target = avg_last10_target/2;   
+        }
+        else if(height>nNewRuleHeight && sum_last10_time <= 10*60)
+        {            
+            arith_uint256 avg_last10_target;
+            avg_last10_target = sum_last10_target/10;
+            if(next_target > avg_last10_target*2/3)  next_target = avg_last10_target*2/3;   
+        }
+    }
 
     /* Compare current time and last block time 
      * If block is not generated for 1 hour, increase next_target by 30%  */

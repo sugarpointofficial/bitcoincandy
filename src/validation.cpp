@@ -1236,7 +1236,7 @@ Amount GetBlockSubsidy(int nHeight, const Consensus::Params &consensusParams) {
         return 1000000 * COIN;
     }
     // Force block reward to zero when right shift is undefined. 
-    if (halvings >= 61) return Amount(0);  //change it from 64 to 61
+    //if (halvings >= 61) return Amount(0);  //change it from 64 to 61
 
     Amount nSubsidy = 50 * COIN;// * COIN_SCALE;
     
@@ -1249,6 +1249,29 @@ Amount GetBlockSubsidy(int nHeight, const Consensus::Params &consensusParams) {
     //}
     // Subsidy is cut in half every 210,000 blocks which will occur
     // approximately every 4 years.
+
+
+    // inflationHeight 2282000 block 2025.1~2014.12
+    // inflation to 1% annually
+    if(nHeight>=consensusParams.nInflationHeight) {
+        double dhalvings;
+        int  passingyear_inflationheight=0;
+        uint64_t totalcoin_at_inflationHeight=0;
+        uint64_t totalcoin=1;
+        uint64_t oneblcksubsidy;
+        dhalvings = (consensusParams.cdyHeight + (consensusParams.nInflationHeight - consensusParams.cdyHeight)/5) 
+                    / consensusParams.nSubsidyHalvingInterval;
+        for(int i=0;i<(int)dhalvings-1;i++)
+            totalcoin_at_inflationHeight += consensusParams.nSubsidyHalvingInterval * 50/(i+1);
+        totalcoin_at_inflationHeight +=(uint64_t)( (dhalvings-(int)dhalvings )*consensusParams.nSubsidyHalvingInterval);
+        totalcoin_at_inflationHeight += 1210000; // cdyHeight, compenseHeight publish coin
+        passingyear_inflationheight = (nHeight - consensusParams.nInflationHeight)/5/consensusParams.nSubsidyHalvingInterval*4;
+	for(int i=0;i<passingyear_inflationheight;i++)
+            totalcoin *= totalcoin_at_inflationHeight + totalcoin_at_inflationHeight/100; 
+        oneblcksubsidy = totalcoin /100 /consensusParams.nSubsidyHalvingInterval /5 *4 *  COIN.GetSatoshis() ;
+        nSubsidy = Amount(oneblcksubsidy) ;
+        return Amount(nSubsidy.GetSatoshis() );
+    }
     return Amount(nSubsidy.GetSatoshis() >> halvings);
 }
 
@@ -2264,7 +2287,7 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
                          "not the expected scriptPubKey at compense height");
         }
     }
-    if (block.nHeight > chainparams.GetConsensus().nCompenseHeight ) {
+    if (block.nHeight > chainparams.GetConsensus().nSgrptForkidHeight ) {
         CScript scriptPubKeyPos,scriptPubKeyBcpa, scriptPubKeyDev, scriptPubKeyMiner;
         std::string sRewardAddress = chainparams.GetConsensus().sPosAddress;
         CTxDestination destination = DecodeDestination(sRewardAddress);
@@ -2277,22 +2300,22 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
 	sRewardAddress = chainparams.GetConsensus().sDevAddress;
         destination = DecodeDestination(sRewardAddress);
         scriptPubKeyDev = GetScriptForDestination(destination);
-        if (block.vtx[0]->vout.size()< 3 || 
-            block.vtx[0]->vout[0].scriptPubKey != scriptPubKeyPos || 
-            block.vtx[0]->vout[1].scriptPubKey != scriptPubKeyBcpa || 
-            block.vtx[0]->vout[2].scriptPubKey != scriptPubKeyDev 
+        if (block.vtx[0]->vout.size()< 4 || 
+            block.vtx[0]->vout[1].scriptPubKey != scriptPubKeyPos || 
+            block.vtx[0]->vout[2].scriptPubKey != scriptPubKeyBcpa || 
+            block.vtx[0]->vout[3].scriptPubKey != scriptPubKeyDev 
 	    ) {
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
                          "not the expected scriptPubKey after compense height");
         }
-        if( block.vtx[0]->vout[0].nValue < GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus())) {
+        if( block.vtx[0]->vout[1].nValue < GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus())) {
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
                          "not the expected block pos-reward division after compense height");
         }
         int64_t posR, bcpaR, devR;
-        posR = block.vtx[0]->vout[0].nValue.GetSatoshis();
-        bcpaR = block.vtx[0]->vout[1].nValue.GetSatoshis();
-        devR = block.vtx[0]->vout[2].nValue.GetSatoshis();
+        posR  = block.vtx[0]->vout[1].nValue.GetSatoshis();
+        bcpaR = block.vtx[0]->vout[2].nValue.GetSatoshis();
+        devR  = block.vtx[0]->vout[3].nValue.GetSatoshis();
  
         if(block.nHeight > chainparams.GetConsensus().nCompenseHeight + 129600)  {
             if(posR < 8.15*bcpaR )

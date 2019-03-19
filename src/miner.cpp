@@ -234,19 +234,19 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
          nFees +   GetBlockSubsidy(nHeight, chainparams.GetConsensus());
     if (nHeight > chainparams.GetConsensus().nCompenseHeight ) {
         coinbaseTx.vout.resize(4);
-        coinbaseTx.vout[0].scriptPubKey =  scriptPubKeyPos;
-        coinbaseTx.vout[1].scriptPubKey =  scriptPubKeyBcpa;
-        coinbaseTx.vout[2].scriptPubKey =  scriptPubKeyDev;
-        coinbaseTx.vout[3].scriptPubKey =  scriptPubKeyIn;
+        coinbaseTx.vout[1].scriptPubKey =  scriptPubKeyPos;
+        coinbaseTx.vout[2].scriptPubKey =  scriptPubKeyBcpa;
+        coinbaseTx.vout[3].scriptPubKey =  scriptPubKeyDev;
+        coinbaseTx.vout[0].scriptPubKey =  scriptPubKeyIn;
 
         coinbaseTx.vout[0].nValue = blockReward;
-            //GetBlockRewardPos(nHeight, blockReward,chainparams.GetConsensus());   //0.84, 0.76, 0.62 * blockReward;
-        coinbaseTx.vout[1].nValue = Amount(0);
-            //GetBlockRewardBcpa(nHeight, blockReward,chainparams.GetConsensus());  //0.05 * blockReward;
-        coinbaseTx.vout[2].nValue =  Amount(0);
-            //GetBlockRewardDev(nHeight, blockReward,chainparams.GetConsensus());   //0.01 * blockReward;
-        coinbaseTx.vout[3].nValue =  Amount(0);
             //GetBlockRewardMiner(nHeight, blockReward,chainparams.GetConsensus()); //0.32, 0.16, 0.10 * blockReward;
+        coinbaseTx.vout[1].nValue = Amount(0);
+            //GetBlockRewardPos(nHeight, blockReward,chainparams.GetConsensus());   //0.84, 0.76, 0.62 * blockReward;
+        coinbaseTx.vout[2].nValue =  Amount(0);
+            //GetBlockRewardBcpa(nHeight, blockReward,chainparams.GetConsensus());  //0.05 * blockReward;
+        coinbaseTx.vout[3].nValue =  Amount(0);
+            //GetBlockRewardDev(nHeight, blockReward,chainparams.GetConsensus());   //0.01 * blockReward;
 	//if(nHeight > chainparams.GetConsensus().nCompenseHeight + 129600 ){// after 6 month
         //    coinbaseTx.vout[0].nValue = 0.84 * blockReward;
         //    coinbaseTx.vout[3].nValue = 0.10 * blockReward;

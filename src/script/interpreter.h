@@ -33,9 +33,10 @@ enum
 {
     FORKID_BCC = 0,
     FORKID_CDY = 0x6f,  // 111
+    FORKID_SGRPT = 0x5f, // 95 
 };
 //add by hmc
-static const uint32_t FORKID_IN_USE = FORKID_CDY;
+static const uint32_t FORKID_IN_USE = FORKID_SGRPT;
 
 /** Script verification flags */
 enum {

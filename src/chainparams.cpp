@@ -179,6 +179,8 @@ public:
  
         /** Height to publish compensing coins*/
         consensus.nCompenseHeight = 758000;
+        consensus.nSgrptForkidHeight = 758000;
+        consensus.nInflationHeight = 2282000;
         consensus.sCompenseAddress = "CayYnoecPxAEqMATgsAGC3R5g4barXjSKy";
         consensus.sPosAddress = "Ccr3fzu4jibLQq7BajStRDrfUjBkscTmjS";
         consensus.sBcpaAddress = "CU4chT3gnRa3zzZxzu45u87Ck9YQQAc6b6";
@@ -232,8 +234,8 @@ public:
         // subset of possible options.
         // Bitcoin ABC seeder
         vSeeds.push_back(
-            CDNSSeedData("sugarpoint.one", "seed.sugarpoint.one", true));
-        vSeeds.push_back(CDNSSeedData("cdy.one", "seed.cdy.one", true));
+            CDNSSeedData("sugarpoint.ho", "sugarcandy.iptime.org", true));
+        vSeeds.push_back(CDNSSeedData("sugarblock.ha", "sugarblock.iptime.org", true));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<uint8_t>(1, 0x1c); // 'C'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<uint8_t>(1, 0x58); // 'c'
@@ -386,6 +388,7 @@ public:
         consensus.CDYEquihashForkHeight = 201671;
 
         consensus.nCompenseHeight = 202136;
+        consensus.nInflationHeight = 2282000;
         consensus.sCompenseAddress = "mhZBATdK8nghjJ6S8F7DSEvDc1pz47bgzP";
         consensus.sPosAddress = "Ccr3fzu4jibLQq7BajStRDrfUjBkscTmjS";
         consensus.sBcpaAddress = "CU4chT3gnRa3zzZxzu45u87Ck9YQQAc6b6";
@@ -542,6 +545,7 @@ public:
         consensus.CDYEquihashForkHeight = 201876;
 
         consensus.nCompenseHeight = 202000; 
+        consensus.nInflationHeight = 2282000;
         consensus.sCompenseAddress = "CSZnk6KoMoEwHmveF3KcyRfEWsZfZ3dgEU";
         consensus.sPosAddress = "Ccr3fzu4jibLQq7BajStRDrfUjBkscTmjS";
         consensus.sBcpaAddress = "CU4chT3gnRa3zzZxzu45u87Ck9YQQAc6b6";
