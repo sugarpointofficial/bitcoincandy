@@ -1253,21 +1253,22 @@ Amount GetBlockSubsidy(int nHeight, const Consensus::Params &consensusParams) {
 
     // inflationHeight 2282000 block 2025.1~2014.12
     // inflation to 1% annually
-    if(nHeight>=consensusParams.nInflationHeight) {
+    if(nHeight>consensusParams.nInflationHeight) {
         double dhalvings;
         int  passingyear_inflationheight=0;
         uint64_t totalcoin_at_inflationHeight=0;
-        uint64_t totalcoin=1;
-        uint64_t oneblcksubsidy;
+        uint64_t totalcoin=0;
+        uint64_t oneblcksubsidy=0;
         dhalvings = (consensusParams.cdyHeight + (consensusParams.nInflationHeight - consensusParams.cdyHeight)/5) 
                     / consensusParams.nSubsidyHalvingInterval;
-        for(int i=0;i<(int)dhalvings-1;i++)
+        for(int i=0;i<(int)dhalvings;i++)
             totalcoin_at_inflationHeight += consensusParams.nSubsidyHalvingInterval * 50/(i+1);
-        totalcoin_at_inflationHeight +=(uint64_t)( (dhalvings-(int)dhalvings )*consensusParams.nSubsidyHalvingInterval);
-        totalcoin_at_inflationHeight += 1210000; // cdyHeight, compenseHeight publish coin
+        totalcoin_at_inflationHeight +=(uint64_t)((int)((dhalvings-(int)dhalvings)*consensusParams.nSubsidyHalvingInterval));
+        totalcoin_at_inflationHeight += 1210000; //  at cdyheight 1%(210000) compenseheight(1000000) publish coin
         passingyear_inflationheight = (nHeight - consensusParams.nInflationHeight)/5/consensusParams.nSubsidyHalvingInterval*4;
+        totalcoin = totalcoin_at_inflationHeight ;
 	for(int i=0;i<passingyear_inflationheight;i++)
-            totalcoin *= totalcoin_at_inflationHeight + totalcoin_at_inflationHeight/100; 
+            totalcoin *= 1.01; 
         oneblcksubsidy = totalcoin /100 /consensusParams.nSubsidyHalvingInterval /5 *4 *  COIN.GetSatoshis() ;
         nSubsidy = Amount(oneblcksubsidy) ;
         return Amount(nSubsidy.GetSatoshis() );
