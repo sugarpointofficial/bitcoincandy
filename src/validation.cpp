@@ -1332,6 +1332,7 @@ bool IsInitialBlockDownload() {
     if (fSkipHardforkIBD && chainActive.Tip()->nHeight + 1 >= (int)chainParams.GetConsensus().cdyHeight)
         return false;
     int64_t target_time = fCDYBootstrapping ? (int64_t)chainParams.GetConsensus().BitcoinPostforkTime : GetTime();
+    //if( chainActive.Tip()->nHeight == 757999) return false; // rollback and make 758000 block
     if (chainActive.Tip()->GetBlockTime() < (target_time - nMaxTipAge))
         return true;
     LogPrintf("Leaving InitialBlockDownload (latching to false)\n");
@@ -2301,22 +2302,26 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
 	sRewardAddress = chainparams.GetConsensus().sDevAddress;
         destination = DecodeDestination(sRewardAddress);
         scriptPubKeyDev = GetScriptForDestination(destination);
-        if (block.vtx[0]->vout.size()< 4 || 
-            block.vtx[0]->vout[1].scriptPubKey != scriptPubKeyPos || 
-            block.vtx[0]->vout[2].scriptPubKey != scriptPubKeyBcpa || 
-            block.vtx[0]->vout[3].scriptPubKey != scriptPubKeyDev 
-	    ) {
-            return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
-                         "not the expected scriptPubKey after compense height");
+
+        uint64_t posR=0, bcpaR=0, devR=0;
+        for( int i=0; i< (block.vtx[0]->vout.size());i++){
+            if(block.vtx[0]->vout[i].scriptPubKey == scriptPubKeyPos) 
+               posR   = block.vtx[0]->vout[i].nValue.GetSatoshis();
+            if(block.vtx[0]->vout[i].scriptPubKey == scriptPubKeyBcpa) 
+               bcpaR  = block.vtx[0]->vout[i].nValue.GetSatoshis();
+            if(block.vtx[0]->vout[i].scriptPubKey == scriptPubKeyDev) 
+               devR   = block.vtx[0]->vout[i].nValue.GetSatoshis();
         }
-        if( block.vtx[0]->vout[1].nValue < GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus())) {
+
+        //if (block.vtx[0]->vout.size()< 3  
+	//    ) {
+        //    return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
+        //                 "not the expected scriptPubKey after compense height");
+        //}
+        if( posR < GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() ) {
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
                          "not the expected block pos-reward division after compense height");
         }
-        int64_t posR, bcpaR, devR;
-        posR  = block.vtx[0]->vout[1].nValue.GetSatoshis();
-        bcpaR = block.vtx[0]->vout[2].nValue.GetSatoshis();
-        devR  = block.vtx[0]->vout[3].nValue.GetSatoshis();
  
         if(block.nHeight > chainparams.GetConsensus().nCompenseHeight + 129600)  {
             if(posR < 8.15*bcpaR )
