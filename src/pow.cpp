@@ -128,8 +128,8 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     assert(height > N);
     if(height>nNewRuleHeight) N = 45; 
     //N = 60 again because of 5,10 window  N=45 for fast adapt temporally
-    //N = 360 after nCompenseHeight with fast adaptaion last02,03,05,10 
-    if(height> params.nCompenseHeight ) N = 360;
+    //N = 60 after nCompenseHeight with fast adaptaion last02,03,05,10 
+    if(height> params.nCompenseHeight ) N = 60;
     arith_uint256 sum_target, sum_last10_target,sum_last05_target;
     int sum_time = 0, nWeight = 0;
 
