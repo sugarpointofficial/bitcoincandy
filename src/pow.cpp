@@ -124,6 +124,8 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     const int CDYEquihashForkHeight= params.CDYEquihashForkHeight; 
     double adjust = 1;//0.998;
     double adjust_fast_adapt = 1.2;//with fast adapt block time is larger  than 120s
+    if(height>params.nSgrptPowadjustHeight)  
+        adjust_fast_adapt = 2.4; //with fast adapt block time is larger  than 120s
     
     assert(height > N);
     if(height>nNewRuleHeight) N = 45; 

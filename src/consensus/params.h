@@ -64,6 +64,8 @@ struct Params {
     uint32_t nSgrptForkidHeight;
     /** Height to inplation 1%/year */
     uint32_t nInflationHeight;
+    /** Height to sgrpt blocktime adjust */
+    uint32_t nSgrptPowadjustHeight;
     
     std::string sCompenseAddress;
     std::string sPosAddress;

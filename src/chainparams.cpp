@@ -180,6 +180,7 @@ public:
         /** Height to publish compensing coins*/
         consensus.nCompenseHeight = 758000;
         consensus.nSgrptForkidHeight = 758000;
+        consensus.nSgrptPowadjustHeight = 759100;
         consensus.nInflationHeight = 2282000;
         consensus.sCompenseAddress = "CayYnoecPxAEqMATgsAGC3R5g4barXjSKy";
         consensus.sPosAddress = "Ccr3fzu4jibLQq7BajStRDrfUjBkscTmjS";
@@ -388,6 +389,7 @@ public:
         consensus.CDYEquihashForkHeight = 201671;
 
         consensus.nCompenseHeight = 202136;
+        consensus.nSgrptPowadjustHeight = 759100;
         consensus.nInflationHeight = 2282000;
         consensus.sCompenseAddress = "mhZBATdK8nghjJ6S8F7DSEvDc1pz47bgzP";
         consensus.sPosAddress = "Ccr3fzu4jibLQq7BajStRDrfUjBkscTmjS";
@@ -545,6 +547,7 @@ public:
         consensus.CDYEquihashForkHeight = 201876;
 
         consensus.nCompenseHeight = 202000; 
+        consensus.nSgrptPowadjustHeight = 759100;
         consensus.nInflationHeight = 2282000;
         consensus.sCompenseAddress = "CSZnk6KoMoEwHmveF3KcyRfEWsZfZ3dgEU";
         consensus.sPosAddress = "Ccr3fzu4jibLQq7BajStRDrfUjBkscTmjS";
