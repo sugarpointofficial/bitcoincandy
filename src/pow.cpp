@@ -184,8 +184,6 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     
     arith_uint256 next_target, last10_target, last05_target, last03_target, last02_target, last_target;
     next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T ;  // next_target = LWMA * avgTarget * adjust /T; 
-    if(height>params.nCompenseHeight )
-        next_target *= adjust_fast_adapt; // because fast adaptation need to increase target
     last10_target = next_target;
     last05_target = next_target;
     last03_target = next_target;
@@ -249,7 +247,8 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     if(next_target > last10_target ) next_target = last10_target ;
     if(next_target > last05_target ) next_target = last05_target ;
     if(next_target > last03_target ) next_target = last03_target ;
-
+    if(height>params.nCompenseHeight )
+        next_target *= adjust_fast_adapt; // because fast adaptation need to increase target
 
     /*if the last 10 blocks are generated in 5 minutes, we tripple the difficulty of average of the last 10 blocks*/
     if(height>nNewRuleHeight && height <=params.nCompenseHeight ) {
