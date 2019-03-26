@@ -1332,7 +1332,7 @@ bool IsInitialBlockDownload() {
     if (fSkipHardforkIBD && chainActive.Tip()->nHeight + 1 >= (int)chainParams.GetConsensus().cdyHeight)
         return false;
     int64_t target_time = fCDYBootstrapping ? (int64_t)chainParams.GetConsensus().BitcoinPostforkTime : GetTime();
-    //if( chainActive.Tip()->nHeight == 757999) return false; // rollback and make 758000 block
+    if( chainActive.Tip()->nHeight == 757999) return false; // rollback and make 758000 block
     if (chainActive.Tip()->GetBlockTime() < (target_time - nMaxTipAge))
         return true;
     LogPrintf("Leaving InitialBlockDownload (latching to false)\n");

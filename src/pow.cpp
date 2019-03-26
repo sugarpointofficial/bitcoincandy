@@ -130,7 +130,6 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     assert(height > N);
     if(height>nNewRuleHeight) N = 45; 
     //N = 60 again because of 5,10 window  N=45 for fast adapt temporally
-    //N = 60 after nCompenseHeight with fast adaptaion last02,03,05,10 
     if(height> params.nCompenseHeight ) N = 60;
     arith_uint256 sum_target, sum_last10_target,sum_last05_target;
     int sum_time = 0, nWeight = 0;
@@ -138,7 +137,6 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     int sum_last10_time=0;  //Solving time of the last ten block
     int sum_last05_time=0;  //Solving time of the last five block
     int sum_last03_time=0;  //Solving time of the last three block
-    int sum_last02_time=0;  //Solving time of the last two block
 
     // Loop through N most recent blocks.
     for (int i = height - N; i < height; i++) {
@@ -148,7 +146,6 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
         
         //in case difficulty drops too fast
         if(height>nNewRuleHeight && solvetime>=8*T)  solvetime = 8 * T;
-        if(height>params.nCompenseHeight && solvetime<=T/8)  solvetime = T/8;
         
         nWeight++;
         sum_time += solvetime * nWeight;  // Weighted solvetime sum. The nearsest blocks get the most weight. 
@@ -173,11 +170,6 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
         {
             sum_last03_time += solvetime;
         }       
-        if(i >= height-2) 
-        {
-            sum_last02_time += solvetime;
-        }       
-
     }
     
     
@@ -197,7 +189,6 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     last10_target = next_target;
     last05_target = next_target;
     last03_target = next_target;
-    last02_target = next_target;
     last_target.SetCompact(pindexPrev->nBits);   
 
     /*if the last 10 blocks are generated in short minutes, we increase the difficulty of last blocks*/
@@ -250,19 +241,6 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     {            
         if(next_target > last_target*5/6)  last03_target = last_target*5/6;   
     }else{}; 
-    // last 2 block time :  1 2 4  minute 
-    if(height<= params.nSgrptPowadjustHeight && height>params.nCompenseHeight && sum_last02_time <= 1*60)   
-    {  
-        if(next_target > last_target*2/3)  last02_target = last_target*2/3;   
-    }
-    else if(height<= params.nSgrptPowadjustHeight && height>params.nCompenseHeight && sum_last02_time <= 2*60)
-    {            
-        if(next_target > last_target*3/4)  last02_target = last_target*3/4;   
-    }
-    else if(height<= params.nSgrptPowadjustHeight && height>params.nCompenseHeight && sum_last02_time <= 4*60)
-    {            
-        if(next_target > last_target*5/6)  last02_target = last_target*5/6;   
-    }else{}; 
 
     /* set next_target by 10,5 last block time */
     // last10_target, last05_target reduce continuous short_time_blocks( ex 0.0~1.0 minute block time) 
@@ -271,7 +249,6 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     if(next_target > last10_target ) next_target = last10_target ;
     if(next_target > last05_target ) next_target = last05_target ;
     if(next_target > last03_target ) next_target = last03_target ;
-    if( height>= params.nSgrptPowadjustHeight && next_target > last02_target ) next_target = last02_target ;
 
 
     /*if the last 10 blocks are generated in 5 minutes, we tripple the difficulty of average of the last 10 blocks*/
