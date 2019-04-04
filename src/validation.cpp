@@ -2313,69 +2313,18 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
                devR   = block.vtx[0]->vout[i].nValue.GetSatoshis();
         }
 
-        //if (block.vtx[0]->vout.size()< 3  
-	//    ) {
-        //    return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
-        //                 "not the expected scriptPubKey after compense height");
-        //}
-        if( posR < GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis()-1 ) {
+        if( posR < GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() ) {
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
                          "not the expected block pos-reward division after compense height");
         }
- 
-        if(block.nHeight > chainparams.GetConsensus().nCompenseHeight + 129600)  {
-            //if(posR < 8.15*bcpaR )
-            //    return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-            //             "not the expected block reward division after compense height");
-            //if(posR < 81.5*devR )
-            //    return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-            //             "not the expected block reward division after compense height");
-            if(posR < 0.815*blockReward.GetSatoshis()-1 || 
-              bcpaR < 0.10*blockReward.GetSatoshis()-1 ||
-               devR < 0.01*blockReward.GetSatoshis()-1 )
-                return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-                         "not the expected block reward division after compense height");
-            if(posR+bcpaR+devR < blockReward.GetSatoshis()*0.925-3)
-                return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-                         "not the expected block reward division after compense height");
-        }else if(block.nHeight > chainparams.GetConsensus().nCompenseHeight + 64800)  {
-            //if(posR < 7.55*bcpaR )
-            //    return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-            //             "not the expected block reward division after compense height");
-            //if(posR < 75.5*devR )
-            //    return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-            //             "not the expected block reward division after compense height");
-            if(posR < 0.755*blockReward.GetSatoshis()-1 || 
-              bcpaR < 0.10*blockReward.GetSatoshis()-1 ||
-               devR < 0.01*blockReward.GetSatoshis()-1 )
-                return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-                         "not the expected block reward division after compense height");
-            if(posR+bcpaR+devR < blockReward.GetSatoshis()*0.865-3)
-                return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-                         "not the expected block reward division after compense height");
-        }else{
-            //if(posR < 5.95*bcpaR )
-            //    return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-            //             "not the expected block reward division after compense height");
-            //if(posR < 59.5*devR )
-            //    return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-            //             "not the expected block reward division after compense height");
-            if(posR < 0.595*blockReward.GetSatoshis()-1 || 
-              bcpaR < 0.10*blockReward.GetSatoshis()-1 ||
-               devR < 0.01*blockReward.GetSatoshis()-1 )
-                return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-                         "not the expected block reward division after compense height");
-            if(posR+bcpaR+devR < blockReward.GetSatoshis()*0.705-3 )
-                return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-                         "not the expected block reward division after compense height");
+        if(bcpaR < GetBlockRewardBcpa(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() ) {
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
+                         "not the expected block bcpa-reward division after compense height");
         }
-        //if( block.vtx[0]->vout[0].nValue != GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus())  || 
-        //    block.vtx[0]->vout[1].nValue != GetBlockRewardBcpa(block.nHeight, blockReward, chainparams.GetConsensus()) || 
-        //    block.vtx[0]->vout[2].nValue != GetBlockRewardDev(block.nHeight, blockReward, chainparams.GetConsensus())   
-        //  ){ 
-        //    return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
-        //                 "not the expected block reward division after compense height");
-	//}
+        if( devR < GetBlockRewardDev(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() ) {
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
+                         "not the expected block dev-reward division after compense height");
+        }
     }
     
     if (!control.Wait()) {
