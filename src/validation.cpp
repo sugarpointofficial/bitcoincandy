@@ -2313,7 +2313,7 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
                devR   = block.vtx[0]->vout[i].nValue.GetSatoshis();
         }
 
-        if(posR!=0 &&  posR < GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() ) {
+        if( posR < GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() ) {
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
                          "not the expected block pos-reward division after compense height");
         }
@@ -2324,6 +2324,12 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
         if(devR!=0 &&  devR < GetBlockRewardDev(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() ) {
             return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
                          "not the expected block dev-reward division after compense height");
+        }
+        if( posR + bcpaR + devR <  GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() 
+                                 + GetBlockRewardBcpa(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() 
+                                 + GetBlockRewardDev(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis()    ) {
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
+                         "not the expected block posbcpadev-reward division after compense height");
         }
     }
     
