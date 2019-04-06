@@ -1371,11 +1371,13 @@ void CheckForkWarningConditions() {
         chainActive.Height() - pindexBestForkTip->nHeight >= 72)
         pindexBestForkTip = nullptr;
 
-    if (pindexBestForkTip ||
-        (pindexBestInvalid &&
-         pindexBestInvalid->nChainWork >
-             chainActive.Tip()->nChainWork +
-                 (GetBlockProof(*chainActive.Tip()) * 6))) {
+    //temporal setting after fork : bluejaytodd
+    //if (pindexBestForkTip ||
+    //    (pindexBestInvalid &&
+    //     pindexBestInvalid->nChainWork >
+    //         chainActive.Tip()->nChainWork +
+    //             (GetBlockProof(*chainActive.Tip()) * 6))) {
+    if (pindexBestForkTip ){ 
         if (!GetfLargeWorkForkFound() && pindexBestForkBase) {
             std::string warning =
                 std::string("'Warning: Large-work fork detected, forking after "
