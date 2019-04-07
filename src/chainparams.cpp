@@ -187,8 +187,9 @@ public:
         consensus.sBcpaAddress = "CU4chT3gnRa3zzZxzu45u87Ck9YQQAc6b6";
         consensus.sDevAddress = "CUCwqLJvPnuWLs4hSuv4DwZrFGEt8cYN4Q";
         
-        consensus.BitcoinPostforkBlock = uint256S("0000000000000000007b746068bd08ba4089f97636690e9dc758774e7db21f17");	// 512666 block hash
-        consensus.BitcoinPostforkTime = 1515799972;
+        //consensus.BitcoinPostforkBlock = uint256S("0000000000000000007b746068bd08ba4089f97636690e9dc758774e7db21f17");	// 512666 block hash
+        //consensus.BitcoinPostforkTime = 1515799972;
+        consensus.BitcoinPostforkTime = 1552664380;
 
         /**
          * The message start string is designed to be unlikely to occur in
@@ -296,6 +297,9 @@ public:
                 //roll back block for coin infaltion
                 {671663, uint256S("0x00000241636f7d345b239a2dd785b8e834b494de4d"
                                   "307535d7afb7b1cb84a641")},
+                //compensation block for coin infaltion SGRPT hardfork
+                {758000, uint256S("0x0000687719aeb805af41f3bc6fd8adb98e121bd078"
+                                  "9e9466a861a60a9cfd2303")}
             }};
 
         // Data as of block
