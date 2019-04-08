@@ -189,6 +189,8 @@ public:
         
         //consensus.BitcoinPostforkBlock = uint256S("0000000000000000007b746068bd08ba4089f97636690e9dc758774e7db21f17");	// 512666 block hash
         //consensus.BitcoinPostforkTime = 1515799972;
+	// 758000 block hash
+        consensus.BitcoinPostforkBlock = uint256S("0x0000687719aeb805af41f3bc6fd8adb98e121bd0789e9466a861a60a9cfd2303");
         consensus.BitcoinPostforkTime = 1552664380;
 
         /**
@@ -235,9 +237,10 @@ public:
         // Note that of those with the service bits flag, most only support a
         // subset of possible options.
         // Bitcoin ABC seeder
+        vSeeds.push_back(CDNSSeedData("sugarnode", "sugarnode.iptime.org", true));
         vSeeds.push_back(
-            CDNSSeedData("sugarpoint.ho", "sugarcandy.iptime.org", true));
-        vSeeds.push_back(CDNSSeedData("sugarblock.ha", "sugarblock.iptime.org", true));
+            CDNSSeedData("bitcoincandy.one", "seed.bitcoincandy.one", true));
+        vSeeds.push_back(CDNSSeedData("cdy.one", "seed.cdy.one", true));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<uint8_t>(1, 0x1c); // 'C'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<uint8_t>(1, 0x58); // 'c'
