@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     // Don't remove this, it's needed to access
     // QCoreApplication:: in the tests
     QCoreApplication app(argc, argv);
-    app.setApplicationName("BitcoinCandy-Qt-test");
+    app.setApplicationName("SugarPoint-Qt-test");
 
     // This is necessary to initialize openssl on the test framework
     // (at least on Darwin).

@@ -1720,7 +1720,7 @@
     </message>
     </context>
 <context>
-    <name>bitcoin-candy</name>
+    <name>sugar-point</name>
     <message>
         <source>Options:</source>
         <translation>Asetukset:</translation>
@@ -1779,7 +1779,7 @@
     </message>
     <message>
         <source>Bitcoin Candy</source>
-        <translation>bitcoin-candy</translation>
+        <translation>sugar-point</translation>
     </message>
     <message>
         <source>The %s developers</source>

@@ -504,9 +504,9 @@ int main(int argc, char **argv) {
     if (opts.fUseTestNet) {
         printf("Using testnet.\n");
         netMagic[0] = 0xf4;
-        netMagic[1] = 0x43;
-        netMagic[2] = 0x44;
-        netMagic[3] = 0x59;
+        netMagic[1] = 0x53;
+        netMagic[2] = 0x47;
+        netMagic[3] = 0x52;
         seeds = testnet_seeds;
         fTestNet = true;
     }

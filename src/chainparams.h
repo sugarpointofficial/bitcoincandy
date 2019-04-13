@@ -63,6 +63,7 @@ public:
     const CMessageHeader::MessageMagic &NetMagic() const { return netMagic; }
     int GetDefaultPort(bool bootstrapping = false) const { return bootstrapping ? nBitcoinDefaultPort : nDefaultPort; }
     const CMessageHeader::MessageMagic& NetMagicLegacy() const { return netMagicLegacy; }
+    const CMessageHeader::MessageMagic& NetMagicCDY() const { return netMagicCDY; }
 
     const CBlock &GenesisBlock() const { return genesis; }
     /** Make miner wait to have peers to avoid wasting work */
@@ -118,6 +119,7 @@ protected:
     Consensus::Params consensus;
     CMessageHeader::MessageMagic diskMagic;
     CMessageHeader::MessageMagic netMagic;
+    CMessageHeader::MessageMagic netMagicCDY;
     CMessageHeader::MessageMagic netMagicLegacy;
     int nDefaultPort;
     int nBitcoinDefaultPort;

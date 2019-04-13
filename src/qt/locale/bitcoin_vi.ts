@@ -162,6 +162,6 @@
     <name>WalletView</name>
     </context>
 <context>
-    <name>bitcoin-candy</name>
+    <name>sugar-point</name>
     </context>
 </TS>

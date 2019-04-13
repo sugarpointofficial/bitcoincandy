@@ -18,6 +18,7 @@
 #include "uint256.h"
 #include "util.h"
 #include "validation.h"
+#include "timedata.h"
 
 unsigned int BitcoinGetNextWorkRequired(const CBlockIndex* pindexPrev, const CBlockHeader *pblock, const Consensus::Params& params);
 
@@ -124,12 +125,12 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
     double adjust = 1;//0.998;
     
     assert(height > N);
-    if(height>nNewRuleHeight) N = 45;
-    arith_uint256 sum_target, sum_last10_target,sum_last5_target;
+    if(height>nNewRuleHeight) N = 45; 
+    arith_uint256 sum_target, sum_last10_target,sum_last05_target;
     int sum_time = 0, nWeight = 0;
-    
+
     int sum_last10_time=0;  //Solving time of the last ten block
-    int sum_last5_time=0;
+    int sum_last05_time=0;  //Solving time of the last five block
 
     // Loop through N most recent blocks.
     for (int i = height - N; i < height; i++) {
@@ -153,51 +154,44 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
         {
             sum_last10_time += solvetime;
             sum_last10_target += target;
-	    if(i >= height-5) 
-            {
-              sum_last5_time += solvetime;
-              sum_last5_target += target;
-            }     
-
         }       
-
+        if(i >= height-5) 
+        {
+            sum_last05_time += solvetime;
+            sum_last05_target += target;
+        }       
     }
-    
     
     // Keep t reasonable in case strange solvetimes occurred.
     if (sum_time < N * N * T / 20) {
         sum_time = N * N * T / 20;
     }
     
-    
     const arith_uint256 pow_limit = UintToArith256(params.PowLimit(true));
     
-    
-    arith_uint256 next_target;
-    next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T;  // next_target = LWMA * avgTarget * adjust /T;   
-    
+    arith_uint256 next_target, last_target;
+    next_target = 2 * (sum_time/(N*(N+1)))* (sum_target/N) * adjust/T;  // next_target = LWMA * avgTarget * adjust /T;
+
     /*if the last 10 blocks are generated in 5 minutes, we tripple the difficulty of average of the last 10 blocks*/
-     if(height>CDYEquihashForkHeight && sum_last5_time <= 90)
-    {
-        arith_uint256 avg_last5_target;
-        avg_last5_target = sum_last5_target/5;
-        if(next_target > avg_last5_target/4)  next_target = avg_last5_target/4;   
-    }else if(height>nNewRuleHeight && sum_last10_time <= 5*60)   
-    {  
-        arith_uint256 avg_last10_target;
-        avg_last10_target = sum_last10_target/10;
-        if(next_target > avg_last10_target/2)  next_target = avg_last10_target/2;   
-    }
-    else if(height>nNewRuleHeight && sum_last10_time <= 10*60)
-    {            
-        arith_uint256 avg_last10_target;
-        avg_last10_target = sum_last10_target/10;
-        if(next_target > avg_last10_target*2/3)  next_target = avg_last10_target*2/3;   
-    }
-    
-    if(height>nNewRuleHeight)
-    {
-        arith_uint256 last_target;
+        if(height>CDYEquihashForkHeight && sum_last05_time <= 90)
+        {
+            arith_uint256 avg_last05_target;
+            avg_last05_target = sum_last05_target/5;
+            if(next_target > avg_last05_target/4)  next_target = avg_last05_target/4;
+        }else if(height>nNewRuleHeight && sum_last10_time <= 5*60)   
+        {  
+            arith_uint256 avg_last10_target;
+            avg_last10_target = sum_last10_target/10;
+            if(next_target > avg_last10_target/2)  next_target = avg_last10_target/2;   
+        }
+        else if(height>nNewRuleHeight && sum_last10_time <= 10*60)
+        {            
+            arith_uint256 avg_last10_target;
+            avg_last10_target = sum_last10_target/10;
+            if(next_target > avg_last10_target*2/3)  next_target = avg_last10_target*2/3;   
+        }
+
+    if( height>nNewRuleHeight ){
         last_target.SetCompact(pindexPrev->nBits);       
         if(next_target> last_target*13/10) next_target = last_target*13/10;    
         /*in case difficulty drops too soon compared to the last block, especially
@@ -208,7 +202,6 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexPrev, const 
         return pow_limit.GetCompact();
     }
      
-
     return next_target.GetCompact();
 }
 

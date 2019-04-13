@@ -226,14 +226,14 @@
     </message>
     </context>
 <context>
-    <name>bitcoin-candy</name>
+    <name>sugar-point</name>
     <message>
         <source>Bitcoin Candy</source>
         <translation>Bitcoin Candy</translation>
     </message>
     <message>
         <source>Whitelisted peers cannot be DoS banned and their transactions are always relayed, even if they are already in the mempool, useful e.g. for a gateway</source>
-        <translation>bitcoin-candy</translation>
+        <translation>sugar-point</translation>
     </message>
     <message>
         <source>Information</source>

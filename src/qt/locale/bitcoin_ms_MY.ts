@@ -500,6 +500,6 @@ Alihkan fail data ke dalam tab semasa</translation>
     </message>
     </context>
 <context>
-    <name>bitcoin-candy</name>
+    <name>sugar-point</name>
     </context>
 </TS>

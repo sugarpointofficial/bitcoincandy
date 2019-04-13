@@ -392,6 +392,11 @@ bool ActivateBestChain(
     const Config &config, CValidationState &state,
     std::shared_ptr<const CBlock> pblock = std::shared_ptr<const CBlock>());
 Amount GetBlockSubsidy(int nHeight, const Consensus::Params &consensusParams);
+Amount GetBlockRewardBcpa(int nHeight, Amount blockValue, const Consensus::Params &consensusParams);
+Amount GetBlockRewardDev(int nHeight, Amount blockValue, const Consensus::Params &consensusParams);
+Amount GetBlockRewardPos(int nHeight, Amount blockValue, const Consensus::Params &consensusParams);
+Amount GetBlockRewardMiner(int nHeight, Amount blockValue, const Consensus::Params &consensusParams);
+
 
 /** 
  * Guess verification progress (as a fraction between 0.0=genesis and

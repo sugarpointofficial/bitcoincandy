@@ -31,9 +31,9 @@ bool BitcoinUnits::valid(int unit) {
 QString BitcoinUnits::name(int unit) {
     switch (unit) {
         case BCH:
-            return QString("CDY");
+            return QString("SGRPT");
         case mBCH:
-            return QString("mCDY");
+            return QString("mSGRPT");
         default:
             return QString("???");
     }
@@ -42,9 +42,9 @@ QString BitcoinUnits::name(int unit) {
 QString BitcoinUnits::description(int unit) {
     switch (unit) {
         case BCH:
-            return QString("CDY");
+            return QString("SGRPT");
         case mBCH:
-            return QString("Milli-CDYs (1 / 1" THIN_SP_UTF8 "000)");
+            return QString("Milli-SGRPTs (1 / 1" THIN_SP_UTF8 "000)");
         default:
             return QString("???");
     }

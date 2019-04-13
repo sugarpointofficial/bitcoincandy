@@ -29,16 +29,16 @@
   <string>????</string>
 
   <key>CFBundleExecutable</key>
-  <string>BitcoinCandy-Qt</string>
+  <string>SugarPoint-Qt</string>
   
   <key>CFBundleName</key>
-  <string>BitcoinCandy-Qt</string>
+  <string>SugarPoint-Qt</string>
 
   <key>LSHasLocalizedDisplayName</key>
   <true/>
 
   <key>CFBundleIdentifier</key>
-  <string>one.bitcoincandy.BitcoinCandy-Qt</string>
+  <string>one.sugarpoint.SugarPoint-Qt</string>
 
   <key>CFBundleURLTypes</key>
   <array>

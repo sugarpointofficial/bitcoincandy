@@ -95,7 +95,7 @@ static void CheckBlockIndex(const Consensus::Params &consensusParams);
 /** Constant stuff for coinbase transactions we create: */
 CScript COINBASE_FLAGS;
 
-const std::string strMessageMagic = "Bitcoin Candy Signed Message:\n";
+const std::string strMessageMagic = "SugarPoint Signed Message:\n";
 
 // Internal stuff
 namespace {
@@ -607,6 +607,18 @@ static bool IsCurrentForFeeEstimation() {
         return false;
     }
     return true;
+}
+
+static bool IsSgrptHFenabled(const Config &config, int nHeight) {
+    return nHeight >= config.GetChainParams().GetConsensus().nSgrptForkHeight;
+}
+
+bool IsSgrptHFenabled(const Config &config, const CBlockIndex *pindexPrev) {
+    if (pindexPrev == nullptr) {
+        return false;
+    }
+
+    return IsSgrptHFenabled(config, pindexPrev->nHeight);
 }
 
 static bool IsCDHFenabled(const Config &config, int nHeight) {
@@ -1236,7 +1248,7 @@ Amount GetBlockSubsidy(int nHeight, const Consensus::Params &consensusParams) {
         return 1000000 * COIN;
     }
     // Force block reward to zero when right shift is undefined. 
-    if (halvings >= 61) return Amount(0);  //change it from 64 to 61
+    //if (halvings >= 61) return Amount(0);  //change it from 64 to 61
 
     Amount nSubsidy = 50 * COIN;// * COIN_SCALE;
     
@@ -1249,7 +1261,69 @@ Amount GetBlockSubsidy(int nHeight, const Consensus::Params &consensusParams) {
     //}
     // Subsidy is cut in half every 210,000 blocks which will occur
     // approximately every 4 years.
+
+
+    // inflationHeight 2282000 block 2025.1~2014.12
+    // inflation to 1% annually
+    if(nHeight>consensusParams.nInflationHeight) {
+        double dhalvings;
+        int  passingyear_inflationheight=0;
+        uint64_t totalcoin_at_inflationHeight=0;
+        uint64_t totalcoin=0;
+        uint64_t oneblcksubsidy=0;
+        dhalvings = (consensusParams.cdyHeight + (consensusParams.nInflationHeight - consensusParams.cdyHeight)/5) 
+                    / consensusParams.nSubsidyHalvingInterval;
+        for(int i=0;i<(int)dhalvings;i++)
+            totalcoin_at_inflationHeight += consensusParams.nSubsidyHalvingInterval * 50/(i+1);
+        totalcoin_at_inflationHeight +=(uint64_t)((int)((dhalvings-(int)dhalvings)*consensusParams.nSubsidyHalvingInterval));
+        totalcoin_at_inflationHeight += 1210000; //  at cdyheight 1%(210000) compenseheight(1000000) publish coin
+        passingyear_inflationheight = (nHeight - consensusParams.nInflationHeight)/5/consensusParams.nSubsidyHalvingInterval*4;
+        totalcoin = totalcoin_at_inflationHeight ;
+	for(int i=0;i<passingyear_inflationheight;i++)
+            totalcoin *= 1.01; 
+        oneblcksubsidy = totalcoin /100 /consensusParams.nSubsidyHalvingInterval /5 *4 *  COIN.GetSatoshis() ;
+        nSubsidy = Amount(oneblcksubsidy) ;
+        return Amount(nSubsidy.GetSatoshis() );
+    }
     return Amount(nSubsidy.GetSatoshis() >> halvings);
+}
+
+Amount GetBlockRewardBcpa(int nHeight, Amount blockValue,const Consensus::Params &consensusParams){
+    int64_t ret = 0;
+    if (nHeight > consensusParams.nCompenseHeight )
+        ret = blockValue.GetSatoshis()*0.10;
+    return Amount(ret);
+}
+
+Amount GetBlockRewardDev(int nHeight, Amount blockValue,const Consensus::Params &consensusParams){
+    int64_t ret = 0;
+    if (nHeight > consensusParams.nCompenseHeight )
+        ret = blockValue.GetSatoshis()*0.01;
+    return Amount(ret);
+}
+
+Amount GetBlockRewardPos(int nHeight, Amount blockValue,const Consensus::Params &consensusParams){
+    int64_t ret=0;
+        if(nHeight > consensusParams.nCompenseHeight + 129600 ){// after 6 month
+            ret = 0.815 * blockValue.GetSatoshis();
+        }else if(nHeight > consensusParams.nCompenseHeight + 64800 ){//after 3 month
+            ret = 0.755 * blockValue.GetSatoshis();
+        }else if(nHeight > consensusParams.nCompenseHeight){//after reward division and compensation
+            ret = 0.595 * blockValue.GetSatoshis();
+        }else{
+        }
+    return Amount(ret);
+}
+
+Amount GetBlockRewardMiner(int nHeight, Amount blockValue,const Consensus::Params &consensusParams){
+    //int64_t ret=0;
+    Amount Aret(0);
+    if(nHeight > consensusParams.nCompenseHeight){
+        Aret = blockValue - GetBlockRewardPos(nHeight, blockValue, consensusParams) - GetBlockRewardBcpa(nHeight, blockValue,consensusParams) - GetBlockRewardDev(nHeight, blockValue,consensusParams) ;
+    }else{
+        Aret = blockValue;
+    }
+    return Aret;
 }
 
 bool IsInitialBlockDownload() {
@@ -1270,6 +1344,7 @@ bool IsInitialBlockDownload() {
     if (fSkipHardforkIBD && chainActive.Tip()->nHeight + 1 >= (int)chainParams.GetConsensus().cdyHeight)
         return false;
     int64_t target_time = fCDYBootstrapping ? (int64_t)chainParams.GetConsensus().BitcoinPostforkTime : GetTime();
+    //if( chainActive.Tip()->nHeight == 757999) return false; // rollback and make 758000 block
     if (chainActive.Tip()->GetBlockTime() < (target_time - nMaxTipAge))
         return true;
     LogPrintf("Leaving InitialBlockDownload (latching to false)\n");
@@ -1923,13 +1998,19 @@ static uint32_t GetBlockScriptFlags(const Config &config,
     }
 
     // If the UAHF is enabled, we start accepting replay protected txns
-    if(IsCDHFenabled(config, pChainTip)){
+    if(IsSgrptHFenabled(config, pChainTip)){
         flags |= SCRIPT_VERIFY_STRICTENC;
         flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
         flags |= SCRIPT_ENABLE_CHANGE_FORKID;
+        FORKID_IN_USE = FORKID_SGRPT;
+    } else if (IsCDHFenabled(config, pChainTip)) {
+        flags |= SCRIPT_VERIFY_STRICTENC;
+        flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
+        FORKID_IN_USE = FORKID_CDY;
     } else if (IsUAHFenabled(config, pChainTip)) {
         flags |= SCRIPT_VERIFY_STRICTENC;
         flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
+        FORKID_IN_USE = FORKID_BCC;
     }
 
     // If the DAA HF is enabled, we start rejecting transaction that use a high
@@ -2224,6 +2305,43 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
             block.vtx[0]->vout[0].scriptPubKey != scriptPubKeyCompense) {
         return state.DoS(100, false, REJECT_INVALID, "blk-bad-scriptPubKey", false,
                          "not the expected scriptPubKey at compense height");
+        }
+    }
+    if (block.nHeight > chainparams.GetConsensus().nSgrptForkHeight ) {
+        CScript scriptPubKeyPos,scriptPubKeyBcpa, scriptPubKeyDev, scriptPubKeyMiner;
+        std::string sRewardAddress = chainparams.GetConsensus().sPosAddress;
+        CTxDestination destination = DecodeDestination(sRewardAddress);
+        scriptPubKeyPos = GetScriptForDestination(destination);
+        
+	sRewardAddress = chainparams.GetConsensus().sBcpaAddress;
+        destination = DecodeDestination(sRewardAddress);
+        scriptPubKeyBcpa = GetScriptForDestination(destination);
+        
+	sRewardAddress = chainparams.GetConsensus().sDevAddress;
+        destination = DecodeDestination(sRewardAddress);
+        scriptPubKeyDev = GetScriptForDestination(destination);
+
+        uint64_t posR=0, bcpaR=0, devR=0;
+        for( int i=0; i< (block.vtx[0]->vout.size());i++){
+            if(block.vtx[0]->vout[i].scriptPubKey == scriptPubKeyPos) 
+               posR   = block.vtx[0]->vout[i].nValue.GetSatoshis();
+            if(block.vtx[0]->vout[i].scriptPubKey == scriptPubKeyBcpa) 
+               bcpaR  = block.vtx[0]->vout[i].nValue.GetSatoshis();
+            if(block.vtx[0]->vout[i].scriptPubKey == scriptPubKeyDev) 
+               devR   = block.vtx[0]->vout[i].nValue.GetSatoshis();
+        }
+
+        if( posR < GetBlockRewardPos(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() ) {
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
+                         "not the expected block pos-reward division after compense height");
+        }
+        if(bcpaR < GetBlockRewardBcpa(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() ) {
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
+                         "not the expected block bcpa-reward division after compense height");
+        }
+        if( devR < GetBlockRewardDev(block.nHeight, blockReward, chainparams.GetConsensus()).GetSatoshis() ) {
+            return state.DoS(100, false, REJECT_INVALID, "blk-bad-reward-division", false,
+                         "not the expected block dev-reward division after compense height");
         }
     }
     

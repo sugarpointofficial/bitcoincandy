@@ -179,10 +179,19 @@ public:
  
         /** Height to publish compensing coins*/
         consensus.nCompenseHeight = 758000;
-        consensus.sCompenseAddress = "CVbtt8dqZKG4xzG7C1oGzEd1G66eoDn2ee";
+        consensus.nSgrptForkHeight = 758000;
+        consensus.nInflationHeight = 2282000;
+        consensus.sCompenseAddress = "CayYnoecPxAEqMATgsAGC3R5g4barXjSKy";
+        consensus.sPosAddress = "Ccr3fzu4jibLQq7BajStRDrfUjBkscTmjS";
+        consensus.sBcpaAddress = "CU4chT3gnRa3zzZxzu45u87Ck9YQQAc6b6";
+        consensus.sDevAddress = "CUCwqLJvPnuWLs4hSuv4DwZrFGEt8cYN4Q";
         
-        consensus.BitcoinPostforkBlock = uint256S("0000000000000000007b746068bd08ba4089f97636690e9dc758774e7db21f17");	// 512666 block hash
+        //consensus.BitcoinPostforkBlock = uint256S("0000000000000000007b746068bd08ba4089f97636690e9dc758774e7db21f17");// 512666 block hash
+        consensus.BitcoinPostforkBlock = uint256S("00043bfba38c60e8b283d4e507e5785b8cd5f72b8b72f66542b2e4c62bd2ed79");// 512666 block hash
         consensus.BitcoinPostforkTime = 1515799972;
+	// 758000 block hash
+        //consensus.BitcoinPostforkBlock = uint256S("0x0000687719aeb805af41f3bc6fd8adb98e121bd0789e9466a861a60a9cfd2303");
+        //consensus.BitcoinPostforkTime = 1552664380;
 
         /**
          * The message start string is designed to be unlikely to occur in
@@ -194,16 +203,20 @@ public:
         diskMagic[2] = 0xb4;
         diskMagic[3] = 0xd9;
         netMagic[0] = 0xe3;
-        netMagic[1] = 0xc3;	// 0x80 + 0x43 'C'
-        netMagic[2] = 0xc4; // 0x80 + 0x44 'D'
-        netMagic[3] = 0xd9; // 0x80 + 0x59 'Y'
+        netMagic[1] = 0xd3;	// 0x80 + 0x43 'C'
+        netMagic[2] = 0xc7; // 0x80 + 0x44 'D'
+        netMagic[3] = 0xd2; // 0x80 + 0x59 'Y'
+        netMagicCDY[0] = 0xe3;
+        netMagicCDY[1] = 0xc3;	// 0x80 + 0x43 'C'
+        netMagicCDY[2] = 0xc4; // 0x80 + 0x44 'D'
+        netMagicCDY[3] = 0xd9; // 0x80 + 0x59 'Y'
         netMagicLegacy[0] = 0xe3; // BCH
         netMagicLegacy[1] = 0xe1; // BCH
         netMagicLegacy[2] = 0xf3; // BCH
         netMagicLegacy[3] = 0xe8; // BCH
 
         // use different default
-        nDefaultPort = 8367;
+        nDefaultPort = 8377;
 	nBitcoinDefaultPort = 8333;
         nPruneAfterHeight = 100000;
         const size_t N = 200, K = 9;
@@ -228,16 +241,17 @@ public:
         // Note that of those with the service bits flag, most only support a
         // subset of possible options.
         // Bitcoin ABC seeder
-        vSeeds.push_back(
-            CDNSSeedData("bitcoincandy.one", "seed.bitcoincandy.one", true));
-        vSeeds.push_back(CDNSSeedData("cdy.one", "seed.cdy.one", true));
+        vSeeds.push_back(CDNSSeedData("sugarnode", "sugarnode.iptime.org", true));
+        //vSeeds.push_back(
+        //    CDNSSeedData("bitcoincandy.one", "seed.bitcoincandy.one", true));
+        //vSeeds.push_back(CDNSSeedData("cdy.one", "seed.cdy.one", true));
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<uint8_t>(1, 0x1c); // 'C'
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<uint8_t>(1, 0x58); // 'c'
         base58Prefixes[SECRET_KEY] = std::vector<uint8_t>(1, 128);
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x88, 0xB2, 0x1E};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x88, 0xAD, 0xE4};
-        cashaddrPrefix = "bitcoincandy";
+        cashaddrPrefix = "sugarpoint";
 
         vFixedSeeds = std::vector<SeedSpec6>(
             pnSeed6_main, pnSeed6_main + ARRAYLEN(pnSeed6_main));
@@ -290,6 +304,9 @@ public:
                 //roll back block for coin infaltion
                 {671663, uint256S("0x00000241636f7d345b239a2dd785b8e834b494de4d"
                                   "307535d7afb7b1cb84a641")},
+                //compensation block for coin infaltion SGRPT hardfork
+                {758000, uint256S("0x0000687719aeb805af41f3bc6fd8adb98e121bd078"
+                                  "9e9466a861a60a9cfd2303")}
             }};
 
         // Data as of block
@@ -383,7 +400,11 @@ public:
         consensus.CDYEquihashForkHeight = 201671;
 
         consensus.nCompenseHeight = 202136;
+        consensus.nInflationHeight = 2282000;
         consensus.sCompenseAddress = "mhZBATdK8nghjJ6S8F7DSEvDc1pz47bgzP";
+        consensus.sPosAddress = "Ccr3fzu4jibLQq7BajStRDrfUjBkscTmjS";
+        consensus.sBcpaAddress = "CU4chT3gnRa3zzZxzu45u87Ck9YQQAc6b6";
+        consensus.sDevAddress = "CUCwqLJvPnuWLs4hSuv4DwZrFGEt8cYN4Q";
         
         consensus.BitcoinPostforkBlock = uint256S("00000000d16d6c2aecc7436eea0c54a53741fee9abf265606aa465d6fd3f3d8a"); // block 201601
         consensus.BitcoinPostforkTime = 1393815074;
@@ -393,9 +414,9 @@ public:
         diskMagic[2] = 0x09;
         diskMagic[3] = 0x07;
         netMagic[0] = 0xf4;
-        netMagic[1] = 0x43;	// 'C'
-        netMagic[2] = 0x44; // 'D'
-        netMagic[3] = 0x59; // 'Y'
+        netMagic[1] = 0x53;	// 'C'
+        netMagic[2] = 0x47; // 'D'
+        netMagic[3] = 0x52; // 'Y'
         // BTC
         netMagicLegacy[0] = 0x0b;
         netMagicLegacy[1] = 0x11;
@@ -408,7 +429,7 @@ public:
         // netMagicLegacy[3] = 0xf4;
 
         // use different default
-        nDefaultPort = 18367;
+        nDefaultPort = 18377;
 	nBitcoinDefaultPort = 18333;
         nPruneAfterHeight = 1000;
         const size_t N = 200, K = 9;
@@ -433,7 +454,7 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
         // nodes with support for servicebits filtering should be at the top
-        vSeeds.push_back(CDNSSeedData("bitcoincandy.one", "testnet-seed.bitcoincandy.one", true));
+        vSeeds.push_back(CDNSSeedData("sugarpoint.one", "testnet-seed.sugarpoint.one", true));
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<uint8_t>(1, 111);
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<uint8_t>(1, 196);
         base58Prefixes[SECRET_KEY] = std::vector<uint8_t>(1, 239);
@@ -536,7 +557,11 @@ public:
         consensus.CDYEquihashForkHeight = 201876;
 
         consensus.nCompenseHeight = 202000; 
+        consensus.nInflationHeight = 2282000;
         consensus.sCompenseAddress = "CSZnk6KoMoEwHmveF3KcyRfEWsZfZ3dgEU";
+        consensus.sPosAddress = "Ccr3fzu4jibLQq7BajStRDrfUjBkscTmjS";
+        consensus.sBcpaAddress = "CU4chT3gnRa3zzZxzu45u87Ck9YQQAc6b6";
+        consensus.sDevAddress = "CUCwqLJvPnuWLs4hSuv4DwZrFGEt8cYN4Q";
         // Nov, 13 hard fork is always on on regtest.
         consensus.daaHeight = 2250;
          

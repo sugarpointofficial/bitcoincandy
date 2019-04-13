@@ -60,8 +60,15 @@ struct Params {
     int CDYEquihashForkHeight;
     /** Height to publish compensing coins*/
     uint32_t nCompenseHeight;
+    /** Height Sgrpt Forkid apply  */
+    uint32_t nSgrptForkHeight;
+    /** Height to inplation 1%/year */
+    uint32_t nInflationHeight;
     
     std::string sCompenseAddress;
+    std::string sPosAddress;
+    std::string sDevAddress;
+    std::string sBcpaAddress;
     
     /** Limit BITCOIN_MAX_FUTURE_BLOCK_TIME **/
     int64_t CDYMaxFutureBlockTime;
