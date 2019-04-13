@@ -61,11 +61,9 @@ struct Params {
     /** Height to publish compensing coins*/
     uint32_t nCompenseHeight;
     /** Height Sgrpt Forkid apply  */
-    uint32_t nSgrptForkidHeight;
+    uint32_t nSgrptForkHeight;
     /** Height to inplation 1%/year */
     uint32_t nInflationHeight;
-    /** Height to sgrpt blocktime adjust */
-    uint32_t nSgrptPowadjustHeight;
     
     std::string sCompenseAddress;
     std::string sPosAddress;
