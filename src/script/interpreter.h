@@ -36,7 +36,10 @@ enum
     FORKID_SGRPT = 0x5f, // 95 
 };
 //add by hmc
-static uint32_t FORKID_IN_USE = FORKID_SGRPT;
+//static const uint32_t FORKID_IN_USE = FORKID_SGRPT;
+//uint32_t FORKID_IN_USE = FORKID_SGRPT;
+extern uint32_t FORKID_IN_USE;
+
 
 /** Script verification flags */
 enum {

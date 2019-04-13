@@ -14,6 +14,7 @@
 #include "uint256.h"
 
 typedef std::vector<uint8_t> valtype;
+uint32_t FORKID_IN_USE= FORKID_SGRPT;
 
 namespace {
 

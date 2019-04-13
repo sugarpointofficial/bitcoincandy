@@ -2002,14 +2002,17 @@ static uint32_t GetBlockScriptFlags(const Config &config,
         flags |= SCRIPT_VERIFY_STRICTENC;
         flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
         flags |= SCRIPT_ENABLE_CHANGE_FORKID;
+        //consensusparams.forkid_in_use = FORKID_SGRPT;
         FORKID_IN_USE = FORKID_SGRPT;
     } else if (IsCDHFenabled(config, pChainTip)) {
         flags |= SCRIPT_VERIFY_STRICTENC;
         flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
+        //consensusparams.forkid_in_use = FORKID_CDY;
         FORKID_IN_USE = FORKID_CDY;
     } else if (IsUAHFenabled(config, pChainTip)) {
         flags |= SCRIPT_VERIFY_STRICTENC;
         flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
+        //consensusparams.forkid_in_use = FORKID_BCC;
         FORKID_IN_USE = FORKID_BCC;
     }
 
@@ -2026,6 +2029,9 @@ static uint32_t GetBlockScriptFlags(const Config &config,
     if (IsMonolithEnabled(config, pChainTip)) {
         flags |= SCRIPT_ENABLE_MONOLITH_OPCODES;
     }
+    //todd
+    //LogPrintf("%d: forkid at height %d \n", __func__,consensusparams.forkid_in_use, pChainTip->nHeight);
+    LogPrintf("%d: forkid at height %d \n", __func__,FORKID_IN_USE, pChainTip->nHeight);
 
     return flags;
 }
