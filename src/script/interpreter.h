@@ -208,6 +208,6 @@ bool EvalScript(std::vector<std::vector<uint8_t>> &stack, const CScript &script,
 bool VerifyScript(const CScript &scriptSig, const CScript &scriptPubKey,
                   uint32_t flags, const BaseSignatureChecker &checker,
                   ScriptError *serror = nullptr);
-void ChangForkid_in_use(uint32_t forkid);
+void ChangeForkid_in_use(uint32_t forkid);
 
 #endif // BITCOIN_SCRIPT_INTERPRETER_H

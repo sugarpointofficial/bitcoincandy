@@ -1326,6 +1326,21 @@ Amount GetBlockRewardMiner(int nHeight, Amount blockValue,const Consensus::Param
     return Aret;
 }
 
+void ChangeForkid_in_use_withHeight(const Consensus::Params &params,const CBlockIndex *pindex){
+    if(pindex->nHeight>=params.nSgrptForkHeight){
+        ChangeForkid_in_use(FORKID_SGRPT);
+        printf("%x %d forkid at height %d \n",FORKID_SGRPT,FORKID_SGRPT,pindex->nHeight);
+    }else if(pindex->nHeight>=params.cdyHeight){
+        ChangeForkid_in_use(FORKID_CDY);
+        printf("%x %d forkid at height %d \n",FORKID_CDY,FORKID_CDY,pindex->nHeight);
+    }else if(pindex->nHeight>=params.uahfHeight){
+        ChangeForkid_in_use(FORKID_BCC);
+        printf("%x %d forkid at height %d \n",FORKID_BCC,FORKID_BCC,pindex->nHeight);
+    }else {
+        ChangeForkid_in_use(FORKID_BCC);
+    }
+}
+
 bool IsInitialBlockDownload() {
     const CChainParams &chainParams = Params();
 
@@ -2002,18 +2017,20 @@ static uint32_t GetBlockScriptFlags(const Config &config,
         flags |= SCRIPT_VERIFY_STRICTENC;
         flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
         flags |= SCRIPT_ENABLE_CHANGE_FORKID;
-        ChangForkid_in_use(FORKID_SGRPT);
+        ChangeForkid_in_use(FORKID_SGRPT);
         //consensusparams.forkid_in_use = FORKID_SGRPT;
         //FORKID_IN_USE = FORKID_SGRPT;
     } else if (IsCDHFenabled(config, pChainTip)) {
         flags |= SCRIPT_VERIFY_STRICTENC;
         flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
-        ChangForkid_in_use(FORKID_CDY);
+        flags |= SCRIPT_ENABLE_CHANGE_FORKID;
+        ChangeForkid_in_use(FORKID_CDY);
         //consensusparams.forkid_in_use = FORKID_CDY;
         //FORKID_IN_USE = FORKID_CDY;
     } else if (IsUAHFenabled(config, pChainTip)) {
         flags |= SCRIPT_VERIFY_STRICTENC;
         flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
+        ChangeForkid_in_use(FORKID_BCC);
         //consensusparams.forkid_in_use = FORKID_BCC;
         //FORKID_IN_USE = FORKID_BCC;
     }

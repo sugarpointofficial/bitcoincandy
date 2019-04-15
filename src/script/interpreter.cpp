@@ -1551,7 +1551,7 @@ PrecomputedTransactionData::PrecomputedTransactionData(
     hashOutputs = GetOutputsHash(txTo);
 }
 
-void ChangForkid_in_use(uint32_t forkid){
+void ChangeForkid_in_use(uint32_t forkid){
     FORKID_IN_USE = forkid;
 }
 
