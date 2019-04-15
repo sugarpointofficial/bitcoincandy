@@ -49,7 +49,7 @@ static const int MAX_URI_LENGTH = 255;
 #define SPINNER_FRAMES 36
 
 #define QAPP_ORG_NAME "SugarPoint"
-#define QAPP_ORG_DOMAIN "sugarpoint.one"
+#define QAPP_ORG_DOMAIN "bitcoincnady.one"
 #define QAPP_APP_NAME_DEFAULT "SugarPoint-Qt"
 #define QAPP_APP_NAME_TESTNET "SugarPoint-Qt-testnet"
 

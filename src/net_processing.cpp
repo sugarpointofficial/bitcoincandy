@@ -1598,7 +1598,7 @@ static bool ProcessMessage(const Config &config, CNode *pfrom,
                   pfrom->nStartingHeight, addrMe.ToString(), pfrom->id,
                   remoteAddr);
         if (pfrom->fUsesSGRPTMagic) {
-            LogPrintf("peer %d uses CDY magic in its headers\n", pfrom->id);
+            LogPrintf("peer %d uses SGRPT magic in its headers\n", pfrom->id);
         }
 
         int64_t nTimeOffset = nTime - GetTime();

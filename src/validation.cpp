@@ -609,6 +609,18 @@ static bool IsCurrentForFeeEstimation() {
     return true;
 }
 
+static bool IsSgrptHFenabled(const Config &config, int nHeight) {
+    return nHeight >= config.GetChainParams().GetConsensus().nSgrptForkHeight;
+}
+
+bool IsSgrptHFenabled(const Config &config, const CBlockIndex *pindexPrev) {
+    if (pindexPrev == nullptr) {
+        return false;
+    }
+
+    return IsSgrptHFenabled(config, pindexPrev->nHeight);
+}
+
 static bool IsCDHFenabled(const Config &config, int nHeight) {
     return nHeight >= config.GetChainParams().GetConsensus().cdyHeight;
 }
@@ -1314,6 +1326,21 @@ Amount GetBlockRewardMiner(int nHeight, Amount blockValue,const Consensus::Param
     return Aret;
 }
 
+void ChangeForkid_in_use_withHeight(const Consensus::Params &params,const CBlockIndex *pindex){
+    if(pindex->nHeight>=params.nSgrptForkHeight){
+        ChangeForkid_in_use(FORKID_SGRPT);
+        printf("%x %d forkid at height %d \n",FORKID_SGRPT,FORKID_SGRPT,pindex->nHeight);
+    }else if(pindex->nHeight>=params.cdyHeight){
+        ChangeForkid_in_use(FORKID_CDY);
+        printf("%x %d forkid at height %d \n",FORKID_CDY,FORKID_CDY,pindex->nHeight);
+    }else if(pindex->nHeight>=params.uahfHeight){
+        ChangeForkid_in_use(FORKID_BCC);
+        printf("%x %d forkid at height %d \n",FORKID_BCC,FORKID_BCC,pindex->nHeight);
+    }else {
+        ChangeForkid_in_use(FORKID_BCC);
+    }
+}
+
 bool IsInitialBlockDownload() {
     const CChainParams &chainParams = Params();
 
@@ -1988,13 +2015,26 @@ static uint32_t GetBlockScriptFlags(const Config &config,
     }
 
     // If the UAHF is enabled, we start accepting replay protected txns
-    if(IsCDHFenabled(config, pChainTip)){
+    if(IsSgrptHFenabled(config, pChainTip)){
         flags |= SCRIPT_VERIFY_STRICTENC;
         flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
         flags |= SCRIPT_ENABLE_CHANGE_FORKID;
+        ChangeForkid_in_use(FORKID_SGRPT);
+        //consensusparams.forkid_in_use = FORKID_SGRPT;
+        //FORKID_IN_USE = FORKID_SGRPT;
+    } else if (IsCDHFenabled(config, pChainTip)) {
+        flags |= SCRIPT_VERIFY_STRICTENC;
+        flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
+        flags |= SCRIPT_ENABLE_CHANGE_FORKID;
+        ChangeForkid_in_use(FORKID_CDY);
+        //consensusparams.forkid_in_use = FORKID_CDY;
+        //FORKID_IN_USE = FORKID_CDY;
     } else if (IsUAHFenabled(config, pChainTip)) {
         flags |= SCRIPT_VERIFY_STRICTENC;
         flags |= SCRIPT_ENABLE_SIGHASH_FORKID;
+        ChangeForkid_in_use(FORKID_BCC);
+        //consensusparams.forkid_in_use = FORKID_BCC;
+        //FORKID_IN_USE = FORKID_BCC;
     }
 
     // If the DAA HF is enabled, we start rejecting transaction that use a high
@@ -2010,6 +2050,9 @@ static uint32_t GetBlockScriptFlags(const Config &config,
     if (IsMonolithEnabled(config, pChainTip)) {
         flags |= SCRIPT_ENABLE_MONOLITH_OPCODES;
     }
+    //todd
+    //LogPrintf("%d: forkid at height %d \n", __func__,consensusparams.forkid_in_use, pChainTip->nHeight);
+    //LogPrintf("%d: forkid at height %d \n", __func__,FORKID_IN_USE, pChainTip->nHeight);
 
     return flags;
 }
@@ -2291,7 +2334,7 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
                          "not the expected scriptPubKey at compense height");
         }
     }
-    if (block.nHeight > chainparams.GetConsensus().nSgrptForkidHeight ) {
+    if (block.nHeight > chainparams.GetConsensus().nSgrptForkHeight ) {
         CScript scriptPubKeyPos,scriptPubKeyBcpa, scriptPubKeyDev, scriptPubKeyMiner;
         std::string sRewardAddress = chainparams.GetConsensus().sPosAddress;
         CTxDestination destination = DecodeDestination(sRewardAddress);

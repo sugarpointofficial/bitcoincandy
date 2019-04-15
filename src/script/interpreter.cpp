@@ -14,6 +14,7 @@
 #include "uint256.h"
 
 typedef std::vector<uint8_t> valtype;
+static uint32_t FORKID_IN_USE;
 
 namespace {
 
@@ -1548,6 +1549,10 @@ PrecomputedTransactionData::PrecomputedTransactionData(
     hashPrevouts = GetPrevoutHash(txTo);
     hashSequence = GetSequenceHash(txTo);
     hashOutputs = GetOutputsHash(txTo);
+}
+
+void ChangeForkid_in_use(uint32_t forkid){
+    FORKID_IN_USE = forkid;
 }
 
 //modified SignatureHash by hmc 

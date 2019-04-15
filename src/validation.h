@@ -788,4 +788,5 @@ void DumpMempool();
 /** Load the mempool from disk. */
 bool LoadMempool(const Config &config);
 
+void ChangeForkid_in_use_withHeight(const Consensus::Params &params,const CBlockIndex *pindex);
 #endif // BITCOIN_VALIDATION_H

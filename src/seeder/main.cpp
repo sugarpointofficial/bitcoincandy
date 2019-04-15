@@ -441,9 +441,9 @@ extern "C" void *ThreadStats(void *) {
 }
 
 static const std::string mainnet_seeds[] = {
-    "s1.sugarpoint.one",  "s2.sugarpoint.one", "s3.sugarpoint.one",  ""};
+    "s1.bitcoincandy.one",  "s2.bitcoincandy.one", "s3.bitcoincandy.one",  ""};
 static const std::string testnet_seeds[] = {
-    "ts1.sugarpoint.one", ""};
+    "ts1.bitcoincandy.one", ""};
 static const std::string *seeds = mainnet_seeds;
 
 const static unsigned int MAX_HOSTS_PER_SEED = 128;
