@@ -71,6 +71,7 @@ struct Params {
     std::string sPosAddress;
     std::string sDevAddress;
     std::string sBcpaAddress;
+    std::string sNewCompenseAddress;
     std::string sNewPosAddress;
     std::string sNewDevAddress;
     std::string sNewBcpaAddress;

@@ -186,6 +186,7 @@ public:
         consensus.sPosAddress = "Ccr3fzu4jibLQq7BajStRDrfUjBkscTmjS";
         consensus.sBcpaAddress = "CU4chT3gnRa3zzZxzu45u87Ck9YQQAc6b6";
         consensus.sDevAddress = "CUCwqLJvPnuWLs4hSuv4DwZrFGEt8cYN4Q";
+        consensus.sNewCompenseAddress = "CYCkJfnsgThQip8yKs1kBVZpmsKkeFcmQF";
         consensus.sNewPosAddress = "Ce63Ybd6TmPag9LJMq2vyb6X1kG2H2R48C";
         consensus.sNewBcpaAddress = "CSDLM9T6v9MkwpEmLCr3AK7xfXmEEDM8zS";
         consensus.sNewDevAddress = "CdddZL6niq6saUPZg2rAsBbA1a1Y9wzVDi";
