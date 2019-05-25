@@ -62,6 +62,8 @@ struct Params {
     uint32_t nCompenseHeight;
     /** Height Sgrpt Forkid apply  */
     uint32_t nSgrptForkHeight;
+    /** Height Sgrpt reward address change apply  */
+    uint32_t nSgrptChangeRewardAddressHeight;
     /** Height to inplation 1%/year */
     uint32_t nInflationHeight;
     
@@ -69,6 +71,9 @@ struct Params {
     std::string sPosAddress;
     std::string sDevAddress;
     std::string sBcpaAddress;
+    std::string sNewPosAddress;
+    std::string sNewDevAddress;
+    std::string sNewBcpaAddress;
     
     /** Limit BITCOIN_MAX_FUTURE_BLOCK_TIME **/
     int64_t CDYMaxFutureBlockTime;
