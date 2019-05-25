@@ -2332,19 +2332,36 @@ static bool ConnectBlock(const Config &config, const CBlock &block,
                          "not the expected scriptPubKey at compense height");
         }
     }
+
+    CScript scriptPubKeyPos,scriptPubKeyBcpa, scriptPubKeyDev, scriptPubKeyMiner;
+    std::string sRewardAddress ;
+    CTxDestination destination ;
     if (block.nHeight > chainparams.GetConsensus().nSgrptForkHeight ) {
-        CScript scriptPubKeyPos,scriptPubKeyBcpa, scriptPubKeyDev, scriptPubKeyMiner;
-        std::string sRewardAddress = chainparams.GetConsensus().sPosAddress;
-        CTxDestination destination = DecodeDestination(sRewardAddress);
-        scriptPubKeyPos = GetScriptForDestination(destination);
-        
-	sRewardAddress = chainparams.GetConsensus().sBcpaAddress;
-        destination = DecodeDestination(sRewardAddress);
-        scriptPubKeyBcpa = GetScriptForDestination(destination);
-        
-	sRewardAddress = chainparams.GetConsensus().sDevAddress;
-        destination = DecodeDestination(sRewardAddress);
-        scriptPubKeyDev = GetScriptForDestination(destination);
+        if(block.nHeight > chainparams.GetConsensus().nSgrptChangeRewardAddressHeight){
+            sRewardAddress = chainparams.GetConsensus().sNewPosAddress;
+            destination = DecodeDestination(sRewardAddress);
+            scriptPubKeyPos = GetScriptForDestination(destination);
+
+            sRewardAddress = chainparams.GetConsensus().sNewBcpaAddress;
+            destination = DecodeDestination(sRewardAddress);
+            scriptPubKeyBcpa = GetScriptForDestination(destination);
+
+            sRewardAddress = chainparams.GetConsensus().sNewDevAddress;
+            destination = DecodeDestination(sRewardAddress);
+            scriptPubKeyDev = GetScriptForDestination(destination);
+        }else{
+            sRewardAddress = chainparams.GetConsensus().sPosAddress;
+            destination = DecodeDestination(sRewardAddress);
+            scriptPubKeyPos = GetScriptForDestination(destination);
+
+            sRewardAddress = chainparams.GetConsensus().sBcpaAddress;
+            destination = DecodeDestination(sRewardAddress);
+            scriptPubKeyBcpa = GetScriptForDestination(destination);
+
+            sRewardAddress = chainparams.GetConsensus().sDevAddress;
+            destination = DecodeDestination(sRewardAddress);
+            scriptPubKeyDev = GetScriptForDestination(destination);
+        }
 
         uint64_t posR=0, bcpaR=0, devR=0;
         for( int i=0; i< (block.vtx[0]->vout.size());i++){

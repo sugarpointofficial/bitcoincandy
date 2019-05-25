@@ -180,11 +180,15 @@ public:
         /** Height to publish compensing coins*/
         consensus.nCompenseHeight = 758000;
         consensus.nSgrptForkHeight = 758000;
+        consensus.nSgrptChangeRewardAddressHeight = 797400;
         consensus.nInflationHeight = 2282000;
         consensus.sCompenseAddress = "CayYnoecPxAEqMATgsAGC3R5g4barXjSKy";
         consensus.sPosAddress = "Ccr3fzu4jibLQq7BajStRDrfUjBkscTmjS";
         consensus.sBcpaAddress = "CU4chT3gnRa3zzZxzu45u87Ck9YQQAc6b6";
         consensus.sDevAddress = "CUCwqLJvPnuWLs4hSuv4DwZrFGEt8cYN4Q";
+        consensus.sNewPosAddress = "Ce63Ybd6TmPag9LJMq2vyb6X1kG2H2R48C";
+        consensus.sNewBcpaAddress = "CSDLM9T6v9MkwpEmLCr3AK7xfXmEEDM8zS";
+        consensus.sNewDevAddress = "CdddZL6niq6saUPZg2rAsBbA1a1Y9wzVDi";
         
         //consensus.BitcoinPostforkBlock = uint256S("0000000000000000007b746068bd08ba4089f97636690e9dc758774e7db21f17");// 512666 block hash
         consensus.BitcoinPostforkBlock = uint256S("00043bfba38c60e8b283d4e507e5785b8cd5f72b8b72f66542b2e4c62bd2ed79");// 512666 block hash

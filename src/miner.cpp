@@ -183,9 +183,23 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
     CScript scriptPubKeyPos;
     CScript scriptPubKeyDev;
     CScript scriptPubKeyBcpa;
-    if (nHeight > chainparams.GetConsensus().nCompenseHeight ) {
-        std::string  sDivReward = chainparams.GetConsensus().sPosAddress;
-        CTxDestination destination = DecodeDestination(sDivReward);
+    std::string sDivReward;
+    CTxDestination destination;
+    if (nHeight > chainparams.GetConsensus().nSgrptChangeRewardAddressHeight ) {
+        sDivReward = chainparams.GetConsensus().sNewPosAddress;
+        destination = DecodeDestination(sDivReward);
+        scriptPubKeyPos = GetScriptForDestination(destination);
+
+        sDivReward = chainparams.GetConsensus().sNewBcpaAddress;
+        destination = DecodeDestination(sDivReward);
+        scriptPubKeyBcpa = GetScriptForDestination(destination);
+
+        sDivReward = chainparams.GetConsensus().sNewDevAddress;
+        destination = DecodeDestination(sDivReward);
+        scriptPubKeyDev = GetScriptForDestination(destination);
+    }else if (nHeight > chainparams.GetConsensus().nCompenseHeight ) {
+        sDivReward = chainparams.GetConsensus().sPosAddress;
+        destination = DecodeDestination(sDivReward);
         scriptPubKeyPos = GetScriptForDestination(destination);
         
 	sDivReward = chainparams.GetConsensus().sDevAddress;//
@@ -195,7 +209,7 @@ BlockAssembler::CreateNewBlock(const CScript &scriptPubKeyIn) {
 	sDivReward = chainparams.GetConsensus().sBcpaAddress;//
         destination = DecodeDestination(sDivReward);
         scriptPubKeyBcpa = GetScriptForDestination(destination);
-    }
+    }else{}
     // redundant
     
     pblock->nVersion =
